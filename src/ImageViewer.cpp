@@ -49,11 +49,15 @@ ImageViewer::playlistVisible(bool v)
 {
     if (v)
     {
-        playlist->show();
+        add(playlist);
+        playlist->resize(x(), y(), 150, h());
+        viewer->resize(x()+150, y(), w()-150, h());
+        playlist->redraw();
     }
     else
     {
-        playlist->hide();
+        remove(playlist);
+        viewer->resize(x(), y(), w(), h());
     }
 }
 

@@ -219,7 +219,7 @@ void
 MainWindow::window_playlist(Fl_Widget *w, void *arg)
 {
     MainWindow *mw = static_cast<MainWindow*>(arg);
-    const Fl_Menu_Item *m = mw->findMenuItem(view_rightbinding);
+    const Fl_Menu_Item *m = mw->findMenuItem(window_playlist);
     mw->imgviewer->playlistVisible(m->value() != 0);
 }
 
