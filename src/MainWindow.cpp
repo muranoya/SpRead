@@ -1,0 +1,401 @@
+#include <FL/Fl_Native_File_Chooser.H>
+#include <cstdlib>
+#include <string>
+#include <vector>
+#include "MainWindow.hpp"
+#include "SettingDialog.hpp"
+#include "MagDialog.hpp"
+#include "App.hpp"
+
+using namespace std;
+
+MainWindow::MainWindow(int argc, char *argv[],
+        int x, int y, int w, int h,
+        const char *title)
+    : Fl_Double_Window(x, y, w, h, title)
+    , menubar(nullptr)
+    , imgviewer(nullptr)
+{
+    createMenus();
+
+    begin();
+    imgviewer = new ImageViewer(0, menubar->h(),
+            this->w(), this->h() - menubar->h());
+    resizable(imgviewer);
+    end();
+
+    applyConfig();
+
+    imgviewer->setChangeStatusCB(updateTitle, this);
+
+    if (argc >= 2)
+    {
+        vector<string> paths;
+        for (int i = 1; i < argc; ++i)
+        {
+            paths.push_back(argv[i]);
+        }
+        imgviewer->openFiles(paths);
+    }
+
+    updateWindowTitle();
+}
+
+MainWindow::~MainWindow()
+{
+    delete imgviewer;
+    delete menubar;
+}
+
+void
+MainWindow::hide()
+{
+    storeConfig();
+    App::SaveConfig();
+    Fl_Double_Window::hide();
+}
+
+void
+MainWindow::updateTitle(void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    mw->updateWindowTitle();
+}
+
+void
+MainWindow::file_open(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+
+    Fl_Native_File_Chooser file_dlg(Fl_Native_File_Chooser::BROWSE_MULTI_FILE);
+    file_dlg.title("Select Files");
+    file_dlg.filter(ImageFile::readableFormatExt().c_str());
+
+    if (file_dlg.show() == 0)
+    {
+        vector<string> files;
+        for (int i = 0; i < file_dlg.count(); ++i)
+        {
+            string filename = file_dlg.filename(i);
+            files.push_back(filename);
+        }
+        mw->imgviewer->openFiles(files);
+    }
+}
+
+void
+MainWindow::file_opendir(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+
+    Fl_Native_File_Chooser dir_dlg(Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY);
+    dir_dlg.title("Select Directories");
+
+    if (dir_dlg.show() == 0)
+    {
+        vector<string> dirs;
+        for (int i = 0; i < dir_dlg.count(); ++i)
+        {
+            string dirname = dir_dlg.filename(i);
+            dirs.push_back(dirname);
+        }
+        mw->imgviewer->openFiles(dirs);
+    }
+}
+
+void
+MainWindow::file_config(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    bool rslt = SettingDialog::openSettingDialog();
+    if (rslt)
+    {
+        mw->imgviewer->setOpenDirLevel(App::view_openlevel);
+        mw->imgviewer->setCacheSize(App::pl_prefetch);
+        mw->imgviewer->setFeedPageMode(
+                static_cast<Viewer::FeedPageMode>(App::view_feedpage));
+    }
+}
+
+void
+MainWindow::file_exit(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    mw->hide();
+}
+
+void
+MainWindow::view_actualsize(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    mw->imgviewer->setViewMode(Viewer::ActualSize);
+}
+
+void
+MainWindow::view_fitwindow(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    mw->imgviewer->setViewMode(Viewer::FittingWindow);
+}
+
+void
+MainWindow::view_fitwidth(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    mw->imgviewer->setViewMode(Viewer::FittingWidth);
+}
+
+void
+MainWindow::view_specmag(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    double f;
+    bool rslt = MagDialog::getFactor(
+            mw->imgviewer->getCustomScaleFactor(),
+            f);
+    if (rslt)
+    {
+        mw->imgviewer->setViewMode(Viewer::CustomScale, f);
+    }
+    else
+    {
+        Fl_Menu_Item *mitems[] = {
+            mw->findMenuItem(view_actualsize),
+            mw->findMenuItem(view_fitwindow),
+            mw->findMenuItem(view_fitwidth),
+            mw->findMenuItem(view_specmag),
+        };
+        mitems[mw->imgviewer->getViewMode()]->set();
+        mitems[Viewer::CustomScale]->clear();
+    }
+}
+
+void
+MainWindow::view_spread(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    const Fl_Menu_Item *m = mw->findMenuItem(view_spread);
+    mw->imgviewer->setSpreadView(m->value() != 0);
+}
+
+void
+MainWindow::view_autospread(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    const Fl_Menu_Item *m = mw->findMenuItem(view_autospread);
+    mw->imgviewer->setAutoAdjustSpread(m->value() != 0);
+}
+
+void
+MainWindow::view_rightbinding(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    const Fl_Menu_Item *m = mw->findMenuItem(view_rightbinding);
+    mw->imgviewer->setRightbindingView(m->value() != 0);
+}
+
+void
+MainWindow::view_nn(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    mw->imgviewer->setScalingMode(Viewer::NearestNeighbor);
+}
+
+void
+MainWindow::view_bl(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    mw->imgviewer->setScalingMode(Viewer::Bilinear);
+}
+
+void
+MainWindow::view_bc(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    mw->imgviewer->setScalingMode(Viewer::Bicubic);
+}
+
+void
+MainWindow::window_playlist(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    const Fl_Menu_Item *m = mw->findMenuItem(view_rightbinding);
+    mw->imgviewer->playlistVisible(m->value() != 0);
+}
+
+void
+MainWindow::updateWindowTitle()
+{
+    if (imgviewer->empty())
+    {
+        label(App::SOFTWARE_NAME.c_str());
+        return;
+    }
+
+    static string title;
+    if (imgviewer->countShowImages() == 1)
+    {
+        title =
+            "[" +
+            to_string(imgviewer->currentIndex(0)+1) +
+            "/" +
+            to_string(imgviewer->count()) +
+            "]";
+    }
+    else
+    {
+        title =
+            "[" +
+            to_string(imgviewer->currentIndex(0)+1) +
+            "-" +
+            to_string(imgviewer->currentIndex(1)+1) +
+            "/" +
+            to_string(imgviewer->count()) +
+            "]";
+    }
+
+    if (imgviewer->countShowImages() == 2)
+    {
+        string title2;
+        if (imgviewer->getRightbindingView())
+        {
+            title2 =
+                imgviewer->currentFileName(1) +
+                " | " +
+                imgviewer->currentFileName(0);
+        }
+        else
+        {
+            title2 =
+                imgviewer->currentFileName(0) +
+                " | " +
+                imgviewer->currentFileName(1);
+        }
+        title += " " + title2;
+    }
+    else
+    {
+        title += " " + imgviewer->currentFileName(0);
+    }
+
+    char buf[32];
+    snprintf(buf, sizeof(buf), " %0.2f%%", imgviewer->getCustomScaleFactor()*100.0);
+    title += buf;
+    label(title.c_str());
+}
+
+Fl_Menu_Item *
+MainWindow::findMenuItem(Fl_Callback *callback)
+{
+    return const_cast<Fl_Menu_Item*>(menubar->find_item(callback));
+}
+
+void
+MainWindow::createMenus()
+{
+    static Fl_Menu_Item Main_Menu[] = {
+    {"&File", 0, 0, 0, FL_SUBMENU},
+      {"&Open",           FL_COMMAND+'o', file_open,         this},
+      {"Open &Directory", FL_COMMAND+'i', file_opendir,      this, FL_MENU_DIVIDER},
+      {"&Config",                      0, file_config,       this, FL_MENU_DIVIDER},
+      {"&Exit",           FL_COMMAND+'q', file_exit,         this},
+      {0},
+    {"&View", 0, 0, 0, FL_SUBMENU},
+      {"&Actual Size",                 0, view_actualsize,   this, FL_MENU_RADIO},
+      {"&Fit Window",                  0, view_fitwindow,    this, FL_MENU_RADIO},
+      {"Fit &Width",                   0, view_fitwidth,     this, FL_MENU_RADIO},
+      {"Specify &Magnification",       0, view_specmag,      this, FL_MENU_RADIO | FL_MENU_DIVIDER},
+      {"&Spread",                      0, view_spread,       this, FL_MENU_TOGGLE},
+      {"A&uto Spread",                 0, view_autospread,   this, FL_MENU_TOGGLE},
+      {"&Right Binding",               0, view_rightbinding, this, FL_MENU_TOGGLE | FL_MENU_DIVIDER},
+      {"&Low Qual(Nearest Neighbor)",  0, view_nn,           this, FL_MENU_RADIO},
+      {"&Balance Qual(Bilinear)",      0, view_bl,           this, FL_MENU_RADIO},
+      {"&High Qual(Bicubic)",          0, view_bc,           this, FL_MENU_RADIO},
+      {0},
+    {"&Window", 0, 0, 0, FL_SUBMENU},
+      {"&Playlist",       FL_COMMAND+'p', window_playlist,   this, FL_MENU_TOGGLE},
+      {0},
+    {0}};
+
+    begin();
+    menubar = new Fl_Menu_Bar(0, 0, w(), 30);
+    menubar->menu(Main_Menu);
+    menubar->global();
+    end();
+}
+
+void
+MainWindow::applyConfig()
+{
+    resize(App::mw_pos_x, App::mw_pos_y,
+            App::mw_size_w, App::mw_size_h);
+    imgviewer->setScalingMode(
+            static_cast<Viewer::ScalingMode>(App::view_ipix));
+    imgviewer->setViewMode(
+            static_cast<Viewer::ViewMode>(App::view_scalem), App::view_scale);
+    imgviewer->setSpreadView(App::view_spread);
+    imgviewer->setRightbindingView(App::view_rbind);
+    imgviewer->setAutoAdjustSpread(App::view_autospread);
+    imgviewer->setFeedPageMode(
+            static_cast<Viewer::FeedPageMode>(App::view_feedpage));
+    imgviewer->setOpenDirLevel(App::view_openlevel);
+    imgviewer->setCacheSize(App::pl_prefetch);
+    imgviewer->playlistVisible(App::pl_visible);
+
+    switch (imgviewer->getScalingMode())
+    {
+        case Viewer::NearestNeighbor:
+            findMenuItem(view_nn)->set();
+            break;
+        case Viewer::Bilinear:
+            findMenuItem(view_bl)->set();
+            break;
+        case Viewer::Bicubic:
+            findMenuItem(view_bc)->set();
+            break;
+    }
+
+    if (imgviewer->getSpreadView())       findMenuItem(view_spread)->set();
+    if (imgviewer->getAutoAdjustSpread()) findMenuItem(view_autospread)->set();
+    if (imgviewer->getRightbindingView()) findMenuItem(view_rightbinding)->set();
+
+    switch (imgviewer->getViewMode())
+    {
+        case Viewer::ActualSize:
+            findMenuItem(view_actualsize)->set();
+            break;
+        case Viewer::FittingWindow:
+            findMenuItem(view_fitwindow)->set();
+            break;
+        case Viewer::FittingWidth:
+            findMenuItem(view_fitwidth)->set();
+            break;
+        case Viewer::CustomScale:
+            findMenuItem(view_specmag)->set();
+            break;
+    }
+
+    if (imgviewer->isPlaylistVisible()) findMenuItem(window_playlist)->set();
+}
+
+void
+MainWindow::storeConfig()
+{
+    App::mw_size_w = w();
+    App::mw_size_h = h();
+    App::mw_pos_x  = x();
+    App::mw_pos_y  = y();
+
+    App::view_scalem     = imgviewer->getViewMode();
+    App::view_scale      = imgviewer->getCustomScaleFactor();
+    App::view_ipix       = imgviewer->getScalingMode();
+    App::view_spread     = imgviewer->getSpreadView();
+    App::view_autospread = imgviewer->getAutoAdjustSpread();
+    App::view_rbind      = imgviewer->getRightbindingView();
+    App::view_openlevel  = imgviewer->getOpenDirLevel();
+    App::view_feedpage   = imgviewer->getFeedPageMode();
+
+    App::pl_visible      = imgviewer->isPlaylistVisible();
+    App::pl_prefetch     = imgviewer->getCacheSize();
+}
+

@@ -1,0 +1,78 @@
+#ifndef IMAGEVIEWER_HPP
+#define IMAGEVIEWER_HPP
+
+#include <FL/Fl_Group.H>
+#include <vector>
+#include <string>
+#include "Viewer.hpp"
+#include "Playlist.hpp"
+#include "BasicImage.hpp"
+
+class ImageViewer : public Fl_Group
+{
+public:
+    typedef void (*ChangeStatusCB)(void *arg);
+
+    explicit ImageViewer(int x, int y, int w, int h);
+    ~ImageViewer();
+
+    void openFiles(const std::vector<std::string> &paths);
+    void clearPlaylist();
+
+    void playlistVisible(bool v);
+    bool isPlaylistVisible() const;
+
+    void setScalingMode(Viewer::ScalingMode mode);
+    Viewer::ScalingMode getScalingMode() const;
+
+    void setViewMode(Viewer::ViewMode mode, double factor);
+    void setViewMode(Viewer::ViewMode mode);
+    double getCustomScaleFactor() const;
+    Viewer::ViewMode getViewMode() const;
+
+    void setSpreadView(bool spread);
+    bool getSpreadView() const;
+
+    void setRightbindingView(bool rbind);
+    bool getRightbindingView() const;
+
+    void setAutoAdjustSpread(bool aas);
+    bool getAutoAdjustSpread() const;
+
+    void setFeedPageMode(Viewer::FeedPageMode mode);
+    Viewer::FeedPageMode getFeedPageMode() const;
+
+    void setOpenDirLevel(int n);
+    int getOpenDirLevel() const;
+
+    void setCacheSize(int n);
+    int getCacheSize() const;
+
+    int countShowImages() const;
+    int count() const;
+    bool empty() const;
+
+    int currentIndex(int i) const;
+    std::string currentFileName(int i) const;
+
+    void setChangeStatusCB(ChangeStatusCB cb, void *arg);
+
+private:
+    ChangeStatusCB changeStatus;
+    Viewer *viewer;
+    Playlist *playlist;
+    void *cb_arg;
+
+    static void viewer_NextImageReq(void *arg);
+    static void viewer_PrevImageReq(void *arg);
+    static void viewer_ChangeNumOfImages(void *arg, int n);
+    static void viewer_OpenImageFiles(void *arg,
+            const std::vector<std::string> &paths);
+    static void viewer_ChangeViewerStatus(void *arg);
+
+    static void playlist_ChangeImages(void *arg,
+            BasicImage *img_l, BasicImage *img_r);
+    static void playlist_ChangePlaylistStatus(void *arg);
+};
+
+#endif // IMAGEVIEWER_HPP
