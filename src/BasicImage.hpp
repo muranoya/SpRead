@@ -7,6 +7,8 @@ class BasicImage
 {
 public:
     explicit BasicImage(int w, int h, int d);
+    explicit BasicImage(int w, int h, int d,
+            const unsigned char *data);
     explicit BasicImage(const Fl_Image &img);
     BasicImage(const BasicImage &other);
     BasicImage(BasicImage &&other);

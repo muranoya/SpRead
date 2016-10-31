@@ -1,6 +1,4 @@
 #include <FL/Fl_Menu_Item.H>
-#include <FL/Fl_JPEG_Image.H>
-#include <FL/Fl_PNG_Image.H>
 #include <FL/filename.H>
 #include <algorithm>
 #include "Playlist.hpp"
@@ -380,22 +378,14 @@ Playlist::openFilesAndDirs(const vector<string> &paths, int level)
     {
         if (!fl_filename_isdir(iter->c_str()))
         {
-            if (ImageFile::isReadableImageFile(*iter))
+            vector<ImageFile*> lists;
+            ImageFile::open(*iter, lists);
+            for (auto iter = lists.begin();
+                    iter != lists.end(); ++iter)
             {
-                ImageFile *imgfile = new ImageFile(*iter);
-                add(imgfile->logicalFileName().c_str(), imgfile);
-                c++;
+                add((*iter)->logicalFileName().c_str(), *iter);
             }
-            else
-            {
-                vector<ImageFile*> imgfiles = ImageFile::openArchive(*iter);
-                for (auto iter = imgfiles.begin();
-                        iter != imgfiles.end(); ++iter)
-                {
-                    add((*iter)->logicalFileName().c_str(), *iter);
-                    c++;
-                }
-            }
+            c += lists.size();
         }
         else if (level > 0)
         {
@@ -443,34 +433,16 @@ Playlist::showImages()
 BasicImage *
 Playlist::loadData(const ImageFile &f)
 {
-    vector<unsigned char> *d = prft.get(f.createKey());
-    if (d)
+    BasicImage *img = prft.get(f.createKey());
+    if (img)
     {
         fprintf(stderr, "cache hit\n");
     }
     else
     {
         fprintf(stderr, "cache miss\n");
-        d = f.readData();
+        img = f.image();
     }
-    if (!d) return nullptr;
-
-    BasicImage *img = nullptr;
-    switch (f.format())
-    {
-        case ImageFile::IMG_JPEG:
-            img = new BasicImage(Fl_JPEG_Image(nullptr, d->data()));
-            break;
-        case ImageFile::IMG_PNG:
-            img = new BasicImage(Fl_PNG_Image(nullptr, d->data(), d->size()));
-            break;
-        case ImageFile::IMG_INVALID:
-            // error
-            fprintf(stderr, "Invalid image file\n");
-            exit(EXIT_FAILURE);
-    }
-    delete d;
-
     return img;
 }
 

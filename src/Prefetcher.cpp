@@ -38,18 +38,17 @@ Prefetcher::putRequest(const vector<ImageFile> &tasks)
     mtx_req.unlock();
 }
 
-vector<unsigned char> *
+BasicImage *
 Prefetcher::get(const string &key)
 {
-    vector<unsigned char> *data = nullptr;
+    BasicImage *img = nullptr;
     mtx.lock();
     if (cache.contain(key))
     {
-        data = new vector<unsigned char>(*cache.get(key));
-        data->shrink_to_fit();
+        img = new BasicImage(*cache.get(key));
     }
     mtx.unlock();
-    return data;
+    return img;
 }
 
 void
@@ -103,7 +102,7 @@ Prefetcher::getTask(int &id)
 
 void
 Prefetcher::setResult(const string &key, int id,
-        vector<unsigned char> *data)
+        BasicImage *data)
 {
     unique_lock<mutex> um(mtx);
     while (task_putid < id)
@@ -168,7 +167,7 @@ Prefetcher::worker_thread()
     for (;;)
     {
         ImageFile *f = getTask(id);
-        vector<unsigned char> *data = f->readData();
+        BasicImage *data = f->image();
         setResult(f->createKey(), id, data);
     }
 }

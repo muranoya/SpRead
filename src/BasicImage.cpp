@@ -12,6 +12,18 @@ BasicImage::BasicImage(int w, int h, int d)
     alloc4ByteAligned(w*h*d, raw_data, align_ptr);
 }
 
+BasicImage::BasicImage(int w, int h, int d,
+        const unsigned char *data)
+    : raw_data(nullptr)
+    , align_ptr(nullptr)
+    , w(w)
+    , h(h)
+    , d(d)
+{
+    alloc4ByteAligned(w*h*d, raw_data, align_ptr);
+    std::copy(data, data+w*h*d, align_ptr);
+}
+
 BasicImage::BasicImage(const Fl_Image &img)
     : raw_data(nullptr)
     , align_ptr(nullptr)

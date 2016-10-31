@@ -2,7 +2,7 @@ CXX      = $(shell fltk-config --cxx)
 DEBUG    = -g
 CXXFLAGS = $(shell fltk-config --use-images --cxxflags ) -std=c++11 -O2 -Wall -I.
 LDFLAGS  = $(shell fltk-config --use-images --ldflags )
-LDSTATIC = $(shell fltk-config --use-images --ldstaticflags ) -larchive
+LDSTATIC = $(shell fltk-config --use-images --ldstaticflags ) -larchive -lpoppler-cpp
 LINK     = $(CXX)
 TARGET = SpRead
 OBJS = main.o   Size.o   Point.o   App.o \
