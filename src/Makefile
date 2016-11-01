@@ -1,6 +1,6 @@
 CXX      = $(shell fltk-config --cxx)
 DEBUG    = -g
-CXXFLAGS = $(shell fltk-config --use-images --cxxflags ) -std=c++11 -O2 -Wall -I.
+CXXFLAGS = $(shell fltk-config --use-images --cxxflags ) -std=c++11 -O2 -Wall -I. -DSUPPORT_PDF
 LDFLAGS  = $(shell fltk-config --use-images --ldflags )
 LDSTATIC = $(shell fltk-config --use-images --ldstaticflags ) -larchive -lpoppler-cpp
 LINK     = $(CXX)

@@ -7,10 +7,12 @@
 #include <algorithm>
 #include <archive.h>
 #include <archive_entry.h>
+#ifdef SUPPORT_PDF
 #include <poppler/cpp/poppler-document.h>
 #include <poppler/cpp/poppler-page.h>
 #include <poppler/cpp/poppler-page-renderer.h>
 #include <poppler/cpp/poppler-image.h>
+#endif
 #include "ImageFile.hpp"
 
 using namespace std;
@@ -24,10 +26,12 @@ static const vector<string> readable_image =
     "jpg", "jpeg",
     "png",
 };
+#ifdef SUPPORT_PDF
 static const vector<string> readable_doc =
 {
     "pdf",
 };
+#endif
 static const vector<string> readable_archive =
 {
     "zip", "tar", "7z", "cab", "rar", "lha", "lzh",
@@ -48,10 +52,12 @@ ImageFile::create(const string &path,
     {
         ft = FT_ARCHIVE;
     }
+#ifdef SUPPORT_PDF
     else if (isReadableDocument(path))
     {
         ft = FT_PDF;
     }
+#endif
     else
     {
         return nullptr;
@@ -85,7 +91,9 @@ ImageFile::loadImage(int index) const
     {
         case FT_IMAGE:   return convert(file_path, data);
         case FT_ARCHIVE: return loadImageFromArchive(index);
+#ifdef SUPPORT_PDF
         case FT_PDF:     return loadImageFromPDF(index);
+#endif
         case FT_INVALID: break;
     }
     return nullptr;
@@ -96,8 +104,10 @@ ImageFile::open(const string &path, vector<ImageItem*> &items)
 {
     if (isReadableImage(path))
         return openImage(path, readFile(path), items);
+#ifdef SUPPORT_PDF
     if (isReadableDocument(path))
         return openPdf(path, readFile(path), items);
+#endif
     if (isReadableArchive(path))
         return openArchive(path, readFile(path), items);
     return false;
@@ -118,7 +128,11 @@ ImageFile::isReadableArchive(const string &path)
 bool
 ImageFile::isReadableDocument(const string &path)
 {
+#ifdef SUPPORT_PDF
     return isReadable(path, readable_doc);
+#else
+    return false;
+#endif
 }
 
 const string &
@@ -137,10 +151,12 @@ ImageFile::readableFormatExt()
                  [](const string &x) { extlist += x + ","; });
         extlist += "}\n";
 
+#ifdef SUPPORT_PDF
         extlist += "Document\t*.{";
         for_each(readable_doc.cbegin(), readable_doc.cend(),
                  [](const string &x) { extlist += x + ","; });
         extlist += "}";
+#endif
     }
     return extlist;
 }
@@ -199,6 +215,7 @@ ImageFile::loadImageFromArchive(int index) const
     return img;
 }
 
+#ifdef SUPPORT_PDF
 BasicImage *
 ImageFile::loadImageFromPDF(int page) const
 {
@@ -242,6 +259,7 @@ ImageFile::loadImageFromPDF(int page) const
     delete p;
     return bimg;
 }
+#endif
 
 vector<uchar>
 ImageFile::readFile(const string &path)
@@ -271,6 +289,7 @@ ImageFile::openImage(const string &path, const vector<uchar> &data, vector<Image
     return true;
 }
 
+#ifdef SUPPORT_PDF
 bool
 ImageFile::openPdf(const string &path, const vector<uchar> &data, vector<ImageItem*> &items)
 {
@@ -294,6 +313,7 @@ ImageFile::openPdf(const string &path, const vector<uchar> &data, vector<ImageIt
     }
     return true;
 }
+#endif
 
 bool
 ImageFile::openArchive(const string &path, const vector<uchar> &data, vector<ImageItem*> &items)
@@ -319,6 +339,7 @@ ImageFile::openArchive(const string &path, const vector<uchar> &data, vector<Ima
         {
             items.push_back(new ImageItem(f_arc, index, entry_name));
         }
+#ifdef SUPPORT_PDF
         else if (isReadableDocument(entry_name))
         {
             vector<uchar> data;
@@ -338,6 +359,7 @@ ImageFile::openArchive(const string &path, const vector<uchar> &data, vector<Ima
             }
             openPdf(path + "/" + entry_name, data, items);
         }
+#endif
         archive_read_data_skip(a);
         index++;
     }

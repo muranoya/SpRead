@@ -33,7 +33,9 @@ private:
         FT_INVALID,
         FT_IMAGE,
         FT_ARCHIVE,
+#ifdef SUPPORT_PDF
         FT_PDF,
+#endif
     };
     const FileType ftype;
     const std::string file_path;
@@ -46,15 +48,19 @@ private:
             const std::vector<uchar> &data);
 
     BasicImage *loadImageFromArchive(int index) const;
+#ifdef SUPPORT_PDF
     BasicImage *loadImageFromPDF(int page) const;
+#endif
 
     static std::vector<uchar> readFile(const std::string &path);
     static bool openImage(const std::string &path,
             const std::vector<uchar> &data,
             std::vector<ImageItem*> &items);
+#ifdef SUPPORT_PDF
     static bool openPdf(const std::string &path,
             const std::vector<uchar> &data,
             std::vector<ImageItem*> &items);
+#endif
     static bool openArchive(const std::string &path,
             const std::vector<uchar> &data,
             std::vector<ImageItem*> &items);
