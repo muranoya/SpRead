@@ -34,12 +34,9 @@ It is written in C++ using FLTK. So, SpRead can run on Windows, OS X and *NIX.
  * 二値化(RGB) (判別分析法、モード法、3σ法、Kittler法、p-tile法)
  * グレイスケール
  * 平均化
-* ZIPなどの圧縮された形式を扱えるようにする (済み 2016/5/30)
- * 暗号化されたファイルへの対応
 * アプリケーショのアイコンを追加する
 * 背景色指定
 * サムネイル表示モード
 * 読み込みダイアログの追加
 * EXIF情報の処理
 * モノクロモード
-
