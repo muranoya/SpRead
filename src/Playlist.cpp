@@ -26,10 +26,9 @@ Playlist::~Playlist()
 void
 Playlist::openFiles(const vector<string> &paths)
 {
-    bool req_refresh = (count() < 2);
     clearPlaylist();
     int c = openFilesAndDirs(paths, getOpenDirLevel());
-    if (req_refresh && !empty())
+    if (!empty())
     {
         changeStatus(0, 0);
         showImages();
