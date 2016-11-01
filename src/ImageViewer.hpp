@@ -45,9 +45,6 @@ public:
     void setOpenDirLevel(int n);
     int getOpenDirLevel() const;
 
-    void setCacheSize(int n);
-    int getCacheSize() const;
-
     int countShowImages() const;
     int count() const;
     bool empty() const;

@@ -16,8 +16,6 @@ private:
     Fl_Window *w;
     Fl_Group *gOpenDir;
     Fl_Spinner *opendirSpinner;
-    Fl_Group *gPrefetch;
-    Fl_Spinner *prefetchSpinner;
     Fl_Group *gPlaylist;
     Fl_Radio_Round_Button *plRBtn_ClickBtn;
     Fl_Radio_Round_Button *plRBtn_ClickPos;

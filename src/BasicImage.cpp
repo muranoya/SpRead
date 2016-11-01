@@ -13,7 +13,7 @@ BasicImage::BasicImage(int w, int h, int d)
 }
 
 BasicImage::BasicImage(int w, int h, int d,
-        const unsigned char *data)
+        const uchar *data)
     : raw_data(nullptr)
     , align_ptr(nullptr)
     , w(w)
@@ -37,11 +37,8 @@ BasicImage::BasicImage(const Fl_Image &img)
         return;
     }
 
-    const unsigned char *ptr =
-        reinterpret_cast<const unsigned char*>(img.data()[0]);
-    /*
-    raw_data = new unsigned char[w*h*d];
-    */
+    const uchar *ptr =
+        reinterpret_cast<const uchar*>(img.data()[0]);
     alloc4ByteAligned(w*h*d, raw_data, align_ptr);
     std::copy(ptr, ptr+w*h*d, align_ptr);
 }
@@ -54,7 +51,6 @@ BasicImage::BasicImage(const BasicImage &other)
     , d(other.d)
 {
     alloc4ByteAligned(w*h*d, raw_data, align_ptr);
-    //raw_data = new unsigned char[w*h*d];
     std::copy(other.raw_data, other.raw_data+w*h*d, align_ptr);
 }
 
@@ -84,7 +80,6 @@ BasicImage::operator=(const BasicImage &other)
     delete[] raw_data;
     
     alloc4ByteAligned(w*h*d, raw_data, align_ptr);
-    //raw_data = new unsigned char[w*h*d];
     std::copy(other.raw_data, other.raw_data+w*h*d, align_ptr);
     
     return *this;
@@ -104,13 +99,13 @@ BasicImage::operator=(BasicImage &&other)
     return *this;
 }
 
-const unsigned char *
+const uchar *
 BasicImage::bits() const
 {
     return align_ptr;
 }
 
-unsigned char *
+uchar *
 BasicImage::bits()
 {
     return align_ptr;
@@ -142,7 +137,7 @@ BasicImage::depth() const
 
 void
 BasicImage::alloc4ByteAligned(int size,
-        unsigned char *&rawPtr, unsigned char *&alignPtr)
+        uchar *&rawPtr, uchar *&alignPtr)
 {
     rawPtr = new unsigned char[size+4];
     
@@ -150,7 +145,7 @@ BasicImage::alloc4ByteAligned(int size,
     void *temp_ptr = rawPtr;
     if (std::align(4, size, temp_ptr, space))
     {
-        alignPtr = reinterpret_cast<unsigned char*>(temp_ptr);
+        alignPtr = reinterpret_cast<uchar*>(temp_ptr);
     }
     else
     {

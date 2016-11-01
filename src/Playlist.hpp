@@ -5,7 +5,6 @@
 #include <vector>
 #include <string>
 #include "ImageFile.hpp"
-#include "Prefetcher.hpp"
 #include "BasicImage.hpp"
 
 class Playlist : public Fl_Multi_Browser
@@ -29,9 +28,6 @@ public:
     void setOpenDirLevel(int n);
     int getOpenDirLevel() const;
 
-    void setCacheSize(int n);
-    int getCacheSize() const;
-
     int countShowImages() const;
     int count() const;
     bool empty() const;
@@ -53,7 +49,6 @@ private:
     int opendirlevel;
     int img_index;
     int img_num;
-    Prefetcher prft;
 
     static void menu_show(Fl_Widget *w, void *arg);
     static void menu_remove(Fl_Widget *w, void *arg);
@@ -68,7 +63,7 @@ private:
     int openFilesAndDirs(const std::vector<std::string> &paths, int level);
 
     void showImages();
-    BasicImage *loadData(const ImageFile &f);
+    BasicImage *loadData(const ImageItem &f);
 };
 
 #endif

@@ -111,7 +111,6 @@ MainWindow::file_config(Fl_Widget *w, void *arg)
     if (rslt)
     {
         mw->imgviewer->setOpenDirLevel(App::view_openlevel);
-        mw->imgviewer->setCacheSize(App::pl_prefetch);
         mw->imgviewer->setFeedPageMode(
                 static_cast<Viewer::FeedPageMode>(App::view_feedpage));
     }
@@ -339,7 +338,6 @@ MainWindow::applyConfig()
     imgviewer->setFeedPageMode(
             static_cast<Viewer::FeedPageMode>(App::view_feedpage));
     imgviewer->setOpenDirLevel(App::view_openlevel);
-    imgviewer->setCacheSize(App::pl_prefetch);
     imgviewer->playlistVisible(App::pl_visible);
 
     switch (imgviewer->getScalingMode())
@@ -396,6 +394,5 @@ MainWindow::storeConfig()
     App::view_feedpage   = imgviewer->getFeedPageMode();
 
     App::pl_visible      = imgviewer->isPlaylistVisible();
-    App::pl_prefetch     = imgviewer->getCacheSize();
 }
 

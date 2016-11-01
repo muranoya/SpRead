@@ -3,73 +3,87 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 #include "BasicImage.hpp"
+#include "Uncopyable.hpp"
 
-class ImageFile
+class ImageItem;
+
+class ImageFile : public Uncopyable
 {
 public:
-    enum FileType
-    {
-        TYPE_INVALID,
-        TYPE_IMG,
-        TYPE_ARCHIVE,
-        TYPE_PDF,
-    };
-    enum ImageFormat
-    {
-        IMG_INVALID,
-        IMG_JPEG,
-        IMG_PNG,
-    };
-
-    explicit ImageFile();
-    // for archive
-    explicit ImageFile(const std::string &path,
-            const std::vector<char> &entry);
-    // for image
-    explicit ImageFile(const std::string &path);
-    // for pdf
-    explicit ImageFile(const std::string &path,
-            int page);
-    ImageFile(const ImageFile &other);
-    ImageFile(ImageFile &&other);
+    static ImageFile *create(const std::string &path,
+            const std::vector<uchar> &data,
+            const std::string &entry = std::string());
     virtual ~ImageFile();
 
-    ImageFile &operator=(const ImageFile &other);
-    ImageFile &operator=(ImageFile &&other);
+    const std::string &path() const;
+    BasicImage *loadImage(int index) const;
 
-    ImageFormat format() const;
-    
-    std::string physicalFilePath() const;
-    std::string physicalFileName() const;
-    std::string logicalFilePath() const;
-    std::string logicalFileName() const;
-    std::string createKey() const;
-
-    BasicImage *image() const;
-
-    static void open(const std::string &path,
-            std::vector<ImageFile*> &lists);
-    static const std::string &readableFormatExt();
-
-private:
-    FileType ftype;
-    ImageFormat imgfmt;
-    std::string file_path;
-    std::string archive_path;
-    std::vector<char> raw_file_entry;
-    int page_idx;
-
-    std::vector<unsigned char> *readImageData() const;
-    std::vector<unsigned char> *readArchiveData() const;
-    BasicImage *readPdfData() const;
-
+    static bool open(const std::string &path,
+            std::vector<ImageItem*> &items);
     static bool isReadableImage(const std::string &path);
     static bool isReadableArchive(const std::string &path);
     static bool isReadableDocument(const std::string &path);
+    static const std::string &readableFormatExt();
+
+private:
+    enum FileType
+    {
+        FT_INVALID,
+        FT_IMAGE,
+        FT_ARCHIVE,
+        FT_PDF,
+    };
+    const FileType ftype;
+    const std::string file_path;
+    const std::string entry_name;
+    const std::vector<uchar> data;
+
+    explicit ImageFile(FileType ft,
+            const std::string &path,
+            const std::string &entry,
+            const std::vector<uchar> &data);
+
+    BasicImage *loadImageFromArchive(int index) const;
+    BasicImage *loadImageFromPDF(int page) const;
+
+    static std::vector<uchar> readFile(const std::string &path);
+    static bool openImage(const std::string &path,
+            const std::vector<uchar> &data,
+            std::vector<ImageItem*> &items);
+    static bool openPdf(const std::string &path,
+            const std::vector<uchar> &data,
+            std::vector<ImageItem*> &items);
+    static bool openArchive(const std::string &path,
+            const std::vector<uchar> &data,
+            std::vector<ImageItem*> &items);
+
+    static BasicImage *convert(const std::string &path,
+            const std::vector<uchar> &data);
     static bool isReadable(const std::string &path,
-            const std::string exts[], int len);
-    static ImageFormat getImageFormat(const std::string &path);
+            const std::vector<std::string> &extvec);
+};
+
+class ImageItem : public Uncopyable
+{
+public:
+    explicit ImageItem(std::shared_ptr<ImageFile> file,
+            int index = -1,
+            const std::string &entry_name = std::string());
+    virtual ~ImageItem();
+
+    std::string physicalPath() const;
+    std::string physicalName() const;
+    std::string virtualPath() const;
+    std::string virtualName() const;
+
+    BasicImage *image() const;
+
+private:
+    const int page;
+    const std::string entry_name;
+    const std::shared_ptr<ImageFile> file;
 };
 
 #endif // IMAGEFILE_HPP

@@ -20,9 +20,6 @@ const int App::view_openlevel_min = 0;
 int       App::view_feedpage;
 
 bool      App::pl_visible;
-int       App::pl_prefetch;
-const int App::pl_prefetch_max = 999;
-const int App::pl_prefetch_min = 0;
 
 const string App::SOFTWARE_ORG("muranoya.net");
 const string App::SOFTWARE_NAME("SpRead");
@@ -52,7 +49,6 @@ App::SaveConfig()
 
     Fl_Preferences pl(&s, "Playlist");
     pl.set("visible",  pl_visible);
-    pl.set("prefetch", pl_prefetch);
 
     s.flush();
 }
@@ -85,10 +81,6 @@ App::LoadConfig()
 
     Fl_Preferences pl(&s, "Playlist");
     g(pl,  "visible",  pl_visible,  true);
-    pl.get("prefetch", pl_prefetch, 20);
-    checkRange(pl_prefetch,
-            pl_prefetch_min,
-            pl_prefetch_max);
 }
 
 char

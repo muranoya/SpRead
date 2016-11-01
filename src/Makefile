@@ -8,12 +8,12 @@ TARGET = SpRead
 OBJS = main.o   Size.o   Point.o   App.o \
 	   MainWindow.o   ImageFile.o   Viewer.o \
 	   Playlist.o   ImageViewer.o   image.o \
-	   BasicImage.o Prefetcher.o \
+	   BasicImage.o \
 	   SettingDialog.o MagDialog.o
 SRCS = main.cpp Size.cpp Point.cpp App.cpp \
 	   MainWindow.cpp ImageFile.cpp Viewer.cpp \
 	   Playlist.cpp ImageViewer.cpp image.cpp \
-	   BasicImage.cpp Prefetcher.cpp \
+	   BasicImage.cpp \
 	   SettingDialog.cpp MagDialog.cpp
 
 .PHONY: all clean
@@ -37,7 +37,6 @@ ImageViewer.o: ImageViewer.cpp ImageViewer.hpp Viewer.hpp Playlist.hpp
 Playlist.o: Playlist.cpp Playlist.hpp ImageFile.hpp for_windows_env.hpp
 image.o: image.cpp image.hpp for_windows_env.hpp
 BasicImage.o: BasicImage.cpp BasicImage.hpp
-Prefetcher.o: Prefetcher.cpp Prefetcher.hpp DataCache.hpp ImageFile.hpp
 SettingDialog.o: SettingDialog.cpp SettingDialog.hpp App.hpp Viewer.hpp
 MagDialog.o: MagDialog.cpp MagDialog.hpp
 

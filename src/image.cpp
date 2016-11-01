@@ -16,8 +16,8 @@ nn(const BasicImage &src, double s)
     const int y1 = h-1;
 
     BasicImage *img = new BasicImage(nw, nh, d);
-    unsigned char *nbits = img->bits();
-    const unsigned char *bits = src.bits();
+    uchar *nbits = img->bits();
+    const uchar *bits = src.bits();
 
     for (int y = 0; y < nh; ++y)
     {
@@ -47,8 +47,8 @@ bl(const BasicImage &src, double s)
     //const int h1 = src.height()-1;
 
     BasicImage *img = new BasicImage(nw, nh, d);
-    unsigned char *nbits = img->bits();
-    const unsigned char *bits = src.bits();
+    uchar *nbits = img->bits();
+    const uchar *bits = src.bits();
 
     for (int y = 0; y < nh; ++y)
     {
@@ -130,8 +130,8 @@ bc(const BasicImage &src, double s)
     const int nh = h*s;
 
     BasicImage *img = new BasicImage(nw, nh, d);
-    unsigned char *nbits = img->bits();
-    const unsigned char *bits = src.bits();
+    uchar *nbits = img->bits();
+    const uchar *bits = src.bits();
 
     for (int y = 0; y < nh; ++y)
     {

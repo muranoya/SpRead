@@ -7,8 +7,6 @@ SettingDialog::SettingDialog()
     : w(nullptr)
     , gOpenDir(nullptr)
     , opendirSpinner(nullptr)
-    , gPrefetch(nullptr)
-    , prefetchSpinner(nullptr)
     , gPlaylist(nullptr)
     , plRBtn_ClickBtn(nullptr)
     , plRBtn_ClickPos(nullptr)
@@ -20,7 +18,7 @@ SettingDialog::SettingDialog()
     , ITEM_HEIGHT(30)
     , ITEM_PADDING(7)
 {
-    w = new Fl_Window(290, 275, "Config");
+    w = new Fl_Window(290, 205, "Config");
     w->begin();
     {
         const int GROUP_W = w->w() - HPADDING*2;
@@ -53,28 +51,6 @@ SettingDialog::SettingDialog()
         }
         gOpenDir->end();
         GROUP_Y += gOpenDir->h() + VPADDING;
-
-
-        gPrefetch = new Fl_Group(
-                GROUP_X, GROUP_Y,
-                GROUP_W, GROUP_H(1),
-                "Prefetch");
-        gPrefetch->box(FL_EMBOSSED_BOX);
-        gPrefetch->begin();
-        {
-            prefetchSpinner = new Fl_Spinner(
-                    ITEM_X(gPrefetch, 60),
-                    ITEM_Y(gPrefetch, 0),
-                    60,
-                    ITEM_HEIGHT,
-                    "The Number of Images:");
-            prefetchSpinner->maximum(
-                    static_cast<double>(App::pl_prefetch_max));
-            prefetchSpinner->minimum(
-                    static_cast<double>(App::pl_prefetch_min));
-        }
-        gPrefetch->end();
-        GROUP_Y += gPrefetch->h() + VPADDING;
 
 
         gPlaylist = new Fl_Group(
@@ -125,29 +101,6 @@ SettingDialog::SettingDialog()
 
 SettingDialog::~SettingDialog()
 {
-    /*
-    delete w;
-    {
-        delete gOpenDir;
-        {
-            delete opendirSpinner;
-        }
-
-        delete gPrefetch;
-        {
-            delete prefetchSpinner;
-        }
-        
-        delete gPlaylist;
-        {
-            delete plRBtn_ClickBtn;
-            delete plRBtn_ClickPos;
-        }
-
-        delete btn_ok;
-        delete btn_cancel;
-    }
-    */
 }
 
 bool
@@ -181,7 +134,6 @@ void
 SettingDialog::loadSettings()
 {
     opendirSpinner->value(App::view_openlevel);
-    prefetchSpinner->value(App::pl_prefetch);
     plRBtn_ClickBtn->value(
             App::view_feedpage == Viewer::MouseButton);
     plRBtn_ClickPos->value(
@@ -192,7 +144,6 @@ void
 SettingDialog::saveSettings()
 {
     App::view_openlevel = static_cast<int>(opendirSpinner->value());
-    App::pl_prefetch = static_cast<int>(prefetchSpinner->value());
     if (plRBtn_ClickBtn->value())
     {
         App::view_feedpage = Viewer::MouseButton;

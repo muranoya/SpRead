@@ -15,7 +15,6 @@ Playlist::Playlist(int x, int y, int w, int h)
     , opendirlevel(99)
     , img_index(-1)
     , img_num(0)
-    , prft()
 {
     box(FL_BORDER_BOX);
 }
@@ -93,7 +92,7 @@ Playlist::clearPlaylist()
 
     for (int i = count(); i > 0; --i)
     {
-        ImageFile *f = static_cast<ImageFile*>(data(i));
+        ImageItem *f = static_cast<ImageItem*>(data(i));
         delete f;
     }
     clear();
@@ -113,18 +112,6 @@ int
 Playlist::getOpenDirLevel() const
 {
     return opendirlevel;
-}
-
-void
-Playlist::setCacheSize(int n)
-{
-    prft.setCacheSize(n);
-}
-
-int
-Playlist::getCacheSize() const
-{
-    return prft.getCacheSize();
 }
 
 int
@@ -161,8 +148,8 @@ Playlist::currentFileName(int i) const
     const int ti = currentIndex(i);
     if (isValidIndex(ti))
     {
-        ImageFile *d = static_cast<ImageFile*>(data(ti+1));
-        return d->logicalFileName();
+        ImageItem *d = static_cast<ImageItem*>(data(ti+1));
+        return d->virtualName();
     }
     return string();
 }
@@ -248,7 +235,7 @@ Playlist::menu_remove(Fl_Widget *w, void *arg)
             continue;
         }
 
-        ImageFile *f = static_cast<ImageFile*>(pl->data(i));
+        ImageItem *f = static_cast<ImageItem*>(pl->data(i));
         delete f;
         pl->remove(i);
         len--;
@@ -297,8 +284,8 @@ Playlist::changeStatus(int new_idx, int new_num)
         {
             if (isValidIndex(img_index+i))
             {
-                ImageFile *f = static_cast<ImageFile*>(data(img_index+1+i));
-                text(img_index+1+i, f->logicalFileName().c_str());
+                ImageItem *f = static_cast<ImageItem*>(data(img_index+1+i));
+                text(img_index+1+i, f->virtualName().c_str());
             }
         }
     }
@@ -312,35 +299,14 @@ Playlist::changeStatus(int new_idx, int new_num)
         {
             if (isValidIndex(img_index+i))
             {
-                ImageFile *f = static_cast<ImageFile*>(data(img_index+1+i));
-                string str = "@B10 " + f->logicalFileName();
+                ImageItem *f = static_cast<ImageItem*>(data(img_index+1+i));
+                string str = "@B10 " + f->virtualName();
                 text(img_index+1+i, str.c_str());
             }
         }
     }
 
-    if (c)
-    {
-        redraw();
-
-        vector<ImageFile> list;
-        int num = std::min(count(), prft.getCacheSize());
-        if (num > 0)
-        {
-            list.push_back(*static_cast<ImageFile*>(data(img_index+1)));
-        }
-        for (int i = 1, n = 1; n < num; ++i)
-        {
-            ImageFile *f;
-            f = static_cast<ImageFile*>(data(nextIndex(img_index, i)+1));
-            list.push_back(*f); n++;
-            if (n >= num) break;
-            f = static_cast<ImageFile*>(data(nextIndex(img_index, -i)+1));
-            list.push_back(*f); n++;
-        }
-        reverse(list.begin(), list.end());
-        prft.putRequest(list);
-    }
+    if (c) redraw();
 }
 
 int
@@ -378,12 +344,12 @@ Playlist::openFilesAndDirs(const vector<string> &paths, int level)
     {
         if (!fl_filename_isdir(iter->c_str()))
         {
-            vector<ImageFile*> lists;
+            vector<ImageItem*> lists;
             ImageFile::open(*iter, lists);
             for (auto iter = lists.begin();
                     iter != lists.end(); ++iter)
             {
-                add((*iter)->logicalFileName().c_str(), *iter);
+                add((*iter)->virtualName().c_str(), *iter);
             }
             c += lists.size();
         }
@@ -415,34 +381,18 @@ Playlist::showImages()
     int n = std::min(count(), 2);
     if (n == 2)
     {
-        ImageFile *f1 = static_cast<ImageFile*>(data(currentIndex(0)+1));
-        ImageFile *f2 = static_cast<ImageFile*>(data(currentIndex(1)+1));
-        changeImages(cb_arg, loadData(*f1), loadData(*f2));
+        ImageItem *f1 = static_cast<ImageItem*>(data(currentIndex(0)+1));
+        ImageItem *f2 = static_cast<ImageItem*>(data(currentIndex(1)+1));
+        changeImages(cb_arg, f1->image(), f2->image());
     }
     else if (n == 1)
     {
-        ImageFile *f1 = static_cast<ImageFile*>(data(currentIndex(0)+1));
-        changeImages(cb_arg, loadData(*f1), nullptr);
+        ImageItem *f1 = static_cast<ImageItem*>(data(currentIndex(0)+1));
+        changeImages(cb_arg, f1->image(), nullptr);
     }
     else
     {
         changeImages(cb_arg, nullptr, nullptr);
     }
-}
-
-BasicImage *
-Playlist::loadData(const ImageFile &f)
-{
-    BasicImage *img = prft.get(f.createKey());
-    if (img)
-    {
-        fprintf(stderr, "cache hit\n");
-    }
-    else
-    {
-        fprintf(stderr, "cache miss\n");
-        img = f.image();
-    }
-    return img;
 }
 

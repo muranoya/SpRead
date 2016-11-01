@@ -8,7 +8,7 @@ class BasicImage
 public:
     explicit BasicImage(int w, int h, int d);
     explicit BasicImage(int w, int h, int d,
-            const unsigned char *data);
+            const uchar *data);
     explicit BasicImage(const Fl_Image &img);
     BasicImage(const BasicImage &other);
     BasicImage(BasicImage &&other);
@@ -17,8 +17,8 @@ public:
     BasicImage &operator=(const BasicImage &other);
     BasicImage &operator=(BasicImage &&other);
 
-    const unsigned char *bits() const;
-    unsigned char *bits();
+    const uchar *bits() const;
+    uchar *bits();
 
     bool isNull() const;
     int width() const;
@@ -26,16 +26,16 @@ public:
     int depth() const;
 
 private:
-    unsigned char *raw_data;
+    uchar *raw_data;
     // 4byte aligned pointer of raw_data.
     // so, you must not delete[] align_ptr;
-    unsigned char *align_ptr;
+    uchar *align_ptr;
     int w;
     int h;
     int d;
 
     static void alloc4ByteAligned(int size,
-            unsigned char *&rawPtr, unsigned char *&alignPtr);
+            uchar *&rawPtr, uchar *&alignPtr);
 };
 
 #endif // BASICIMAGE_HPP

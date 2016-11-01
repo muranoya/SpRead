@@ -163,18 +163,6 @@ ImageViewer::getOpenDirLevel() const
     return playlist->getOpenDirLevel();
 }
 
-void
-ImageViewer::setCacheSize(int n)
-{
-    playlist->setCacheSize(n);
-}
-
-int
-ImageViewer::getCacheSize() const
-{
-    return playlist->getCacheSize();
-}
-
 int
 ImageViewer::countShowImages() const
 {

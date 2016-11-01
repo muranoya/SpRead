@@ -27,9 +27,6 @@ public:
 
     // Group - Playlist
     static bool pl_visible;
-    static int  pl_prefetch;
-    static const int pl_prefetch_max;
-    static const int pl_prefetch_min;
 
     static const std::string SOFTWARE_ORG;
     static const std::string SOFTWARE_NAME;
