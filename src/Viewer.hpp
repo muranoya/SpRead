@@ -5,6 +5,7 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include <functional>
 
 #include "BasicImage.hpp"
 #include "Point.hpp"
@@ -12,11 +13,16 @@
 class Viewer : public Fl_Widget
 {
 public:
-    typedef void (*ImageReqCB)(void *arg);
-    typedef void (*ChangeNumOfImagesCB)(void *arg, int n);
-    typedef void (*OpenImageFilesCB)(void *arg,
-            const std::vector<std::string> &paths);
-    typedef void (*ChangeViewerStatusCB)(void *arg);
+    typedef std::function<void(void)>
+        NextImageReqCB;
+    typedef std::function<void(void)>
+        PrevImageReqCB;
+    typedef std::function<void(int)>
+        ChangeNumOfImagesCB;
+    typedef std::function<void(const std::vector<std::string>&)>
+        OpenImageFilesCB;
+    typedef std::function<void(void)>
+        ChangeViewerStatusCB;
 
     enum FeedPageMode
     {
@@ -62,9 +68,8 @@ public:
     void setFeedPageMode(FeedPageMode mode);
     FeedPageMode getFeedPageMode() const;
 
-    void setCallbackUserData(void *arg);
-    void setNextImageCB(ImageReqCB cb);
-    void setPrevImageCB(ImageReqCB cb);
+    void setNextImageCB(NextImageReqCB cd);
+    void setPrevImageCB(PrevImageReqCB cd);
     void setChangeNumOfImagesCB(ChangeNumOfImagesCB cb);
     void setOpenImageFilesCB(OpenImageFilesCB cb);
     void setChangeViewerStatusCB(ChangeViewerStatusCB cb);
@@ -74,12 +79,11 @@ public:
     int handle(int event);
 
 private:
-    ImageReqCB nextImageRequest;
-    ImageReqCB prevImageRequest;
+    NextImageReqCB nextImgReq;
+    PrevImageReqCB prevImgReq;
     ChangeNumOfImagesCB changeNumOfImages;
     OpenImageFilesCB openImageFiles;
     ChangeViewerStatusCB changeViewerStatus;
-    void *cb_arg;
 
     const BasicImage *based_imgs[2];
     BasicImage *scaled_imgs[2];

@@ -4,9 +4,9 @@ using namespace std;
 
 ImageViewer::ImageViewer(int x, int y, int w, int h)
     : Fl_Group(x, y, w, h)
+    , changeStatus()
     , viewer(nullptr)
     , playlist(nullptr)
-    , cb_arg(nullptr)
 {
     begin();
     playlist = new Playlist(x, y, 150, h);
@@ -14,16 +14,35 @@ ImageViewer::ImageViewer(int x, int y, int w, int h)
     resizable(*viewer);
     end();
 
-    viewer->setCallbackUserData(this);
-    viewer->setNextImageCB(viewer_NextImageReq);
-    viewer->setPrevImageCB(viewer_PrevImageReq);
-    viewer->setChangeNumOfImagesCB(viewer_ChangeNumOfImages);
-    viewer->setOpenImageFilesCB(viewer_OpenImageFiles);
-    viewer->setChangeViewerStatusCB(viewer_ChangeViewerStatus);
+    viewer->setNextImageCB(
+            [this](){
+            playlist->nextImage();
+            });
+    viewer->setPrevImageCB(
+            [this](){
+            playlist->prevImage();
+            });
+    viewer->setChangeNumOfImagesCB(
+            [this](int n) {
+            playlist->changeNumOfImages(n);
+            });
+    viewer->setOpenImageFilesCB(
+            [this](const vector<string> &paths) {
+            playlist->openFiles(paths);
+            });
+    viewer->setChangeViewerStatusCB(
+            [this]() {
+            if (changeStatus) changeStatus();
+            });
 
-    playlist->setCallbackUserData(this);
-    playlist->setChangeImagesCB(playlist_ChangeImages);
-    playlist->setChangePlaylistStatusCB(playlist_ChangePlaylistStatus);
+    playlist->setChangeImagesCB(
+            [this](BasicImage *l, BasicImage *r) {
+            viewer->showImages(l, r);
+            });
+    playlist->setChangePlaylistStatusCB(
+            [this]() {
+            if (changeStatus) changeStatus();
+            });
 }
 
 ImageViewer::~ImageViewer()
@@ -194,60 +213,8 @@ ImageViewer::currentFileName(int i) const
 }
 
 void
-ImageViewer::setChangeStatusCB(ChangeStatusCB cb, void *arg)
+ImageViewer::setChangeStatusCB(ChangeStatusCB cb)
 {
     changeStatus = cb;
-    cb_arg = arg;
-}
-
-void
-ImageViewer::viewer_NextImageReq(void *arg)
-{
-    ImageViewer *iv = static_cast<ImageViewer*>(arg);
-    iv->playlist->nextImage();
-}
-
-void
-ImageViewer::viewer_PrevImageReq(void *arg)
-{
-    ImageViewer *iv = static_cast<ImageViewer*>(arg);
-    iv->playlist->prevImage();
-}
-
-void
-ImageViewer::viewer_ChangeNumOfImages(void *arg, int n)
-{
-    ImageViewer *iv = static_cast<ImageViewer*>(arg);
-    iv->playlist->changeNumOfImages(n);
-}
-
-void
-ImageViewer::viewer_OpenImageFiles(void *arg,
-            const vector<string> &paths)
-{
-    ImageViewer *iv = static_cast<ImageViewer*>(arg);
-    iv->playlist->openFiles(paths);
-}
-
-void
-ImageViewer::viewer_ChangeViewerStatus(void *arg)
-{
-    ImageViewer *iv = static_cast<ImageViewer*>(arg);
-    if (iv->changeStatus) iv->changeStatus(iv->cb_arg);
-}
-
-void
-ImageViewer::playlist_ChangeImages(void *arg,
-            BasicImage *img_l, BasicImage *img_r)
-{
-    ImageViewer *iv = static_cast<ImageViewer*>(arg);
-    iv->viewer->showImages(img_l, img_r);
-}
-
-void
-ImageViewer::playlist_ChangePlaylistStatus(void *arg)
-{
-    ImageViewer *iv = static_cast<ImageViewer*>(arg);
-    if (iv->changeStatus) iv->changeStatus(iv->cb_arg);
 }
 

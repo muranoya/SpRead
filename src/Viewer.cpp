@@ -13,12 +13,11 @@ using namespace std;
 
 Viewer::Viewer(int x, int y, int w, int h)
     : Fl_Widget(x, y, w, h)
-    , nextImageRequest(nullptr)
-    , prevImageRequest(nullptr)
-    , changeNumOfImages(nullptr)
-    , openImageFiles(nullptr)
-    , changeViewerStatus(nullptr)
-    , cb_arg(nullptr)
+    , nextImgReq()
+    , prevImgReq()
+    , changeNumOfImages()
+    , openImageFiles()
+    , changeViewerStatus()
     , based_imgs()
     , scaled_imgs()
     , img_num(0)
@@ -160,21 +159,15 @@ Viewer::getFeedPageMode() const
 }
 
 void
-Viewer::setCallbackUserData(void *arg)
+Viewer::setNextImageCB(NextImageReqCB cb)
 {
-    cb_arg = arg;
+    nextImgReq = cb;
 }
 
 void
-Viewer::setNextImageCB(ImageReqCB cb)
+Viewer::setPrevImageCB(PrevImageReqCB cb)
 {
-    nextImageRequest = cb;
-}
-
-void
-Viewer::setPrevImageCB(ImageReqCB cb)
-{
-    prevImageRequest = cb;
+    prevImgReq = cb;
 }
 
 void
@@ -316,7 +309,7 @@ Viewer::handle(int event)
                 vector<string> paths;
                 string str = Fl::event_text();
                 splitWithNewLine(str, paths);
-                if (openImageFiles) openImageFiles(cb_arg, paths);
+                if (openImageFiles) openImageFiles(paths);
             }
             return 1;
     }
@@ -339,13 +332,13 @@ Viewer::mousePressEvent()
         case MouseButton:
             if (Fl::event_button() == FL_RIGHT_MOUSE)
             {
-                if (prevImageRequest) prevImageRequest(cb_arg);
+                if (prevImgReq) prevImgReq();
             }
             else if (Fl::event_button() == FL_LEFT_MOUSE)
             {
                 if (getViewMode() == FittingWindow)
                 {
-                    if (nextImageRequest) nextImageRequest(cb_arg);
+                    if (nextImgReq) nextImgReq();
                 }
                 else
                 {
@@ -362,11 +355,11 @@ Viewer::mousePressEvent()
                 {
                     if (Fl::event_x()-x() < w()/2)
                     {
-                        if (prevImageRequest) prevImageRequest(cb_arg);
+                        if (prevImgReq) prevImgReq();
                     }
                     else
                     {
-                        if (nextImageRequest) nextImageRequest(cb_arg);
+                        if (nextImgReq) nextImgReq();
                     }
                 }
                 else
@@ -405,15 +398,15 @@ Viewer::mouseReleaseEvent()
             case MouseClickPosition:
                 if (Fl::event_x()-x() < w()/2)
                 {
-                    if (prevImageRequest) prevImageRequest(cb_arg);
+                    if (prevImgReq) prevImgReq();
                 }
                 else
                 {
-                    if (nextImageRequest) nextImageRequest(cb_arg);
+                    if (nextImgReq) nextImgReq();
                 }
                 break;
             case MouseButton:
-                if (nextImageRequest) nextImageRequest(cb_arg);
+                if (nextImgReq) nextImgReq();
                 break;
         }
         return 1;
@@ -426,12 +419,12 @@ Viewer::keyPressEvent()
 {
     if (Fl::event_key() == FL_Right)
     {
-        if (nextImageRequest) nextImageRequest(cb_arg);
+        if (nextImgReq) nextImgReq();
         return 1;
     }
     if (Fl::event_key() == FL_Left)
     {
-        if (prevImageRequest) prevImageRequest(cb_arg);
+        if (prevImgReq) prevImgReq();
         return 1;
     }
     return 0;
@@ -563,12 +556,12 @@ Viewer::rescaling()
 
     if (old_imgnum != img_num)
     {
-        if (changeNumOfImages) changeNumOfImages(cb_arg, img_num);
+        if (changeNumOfImages) changeNumOfImages(img_num);
     }
 
     if (oldfactor != scale_factor)
     {
-        if (changeViewerStatus) changeViewerStatus(cb_arg);
+        if (changeViewerStatus) changeViewerStatus();
     }
 
     redraw();

@@ -10,13 +10,10 @@ class MainWindow : public Fl_Double_Window
 {
 public:
     explicit MainWindow(int argc, char *argv[],
-            int x, int y, int w, int h,
-            const char *title = 0);
+            int x, int y, int w, int h);
     ~MainWindow();
 
     void hide();
-
-    static void updateTitle(void *arg);
 
 private:
     Fl_Menu_Bar *menubar;

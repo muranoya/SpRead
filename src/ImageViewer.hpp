@@ -4,6 +4,7 @@
 #include <FL/Fl_Group.H>
 #include <vector>
 #include <string>
+#include <functional>
 #include "Viewer.hpp"
 #include "Playlist.hpp"
 #include "BasicImage.hpp"
@@ -11,7 +12,8 @@
 class ImageViewer : public Fl_Group
 {
 public:
-    typedef void (*ChangeStatusCB)(void *arg);
+    typedef std::function<void(void)>
+        ChangeStatusCB;
 
     explicit ImageViewer(int x, int y, int w, int h);
     ~ImageViewer();
@@ -52,24 +54,12 @@ public:
     int currentIndex(int i) const;
     std::string currentFileName(int i) const;
 
-    void setChangeStatusCB(ChangeStatusCB cb, void *arg);
+    void setChangeStatusCB(ChangeStatusCB cb);
 
 private:
     ChangeStatusCB changeStatus;
     Viewer *viewer;
     Playlist *playlist;
-    void *cb_arg;
-
-    static void viewer_NextImageReq(void *arg);
-    static void viewer_PrevImageReq(void *arg);
-    static void viewer_ChangeNumOfImages(void *arg, int n);
-    static void viewer_OpenImageFiles(void *arg,
-            const std::vector<std::string> &paths);
-    static void viewer_ChangeViewerStatus(void *arg);
-
-    static void playlist_ChangeImages(void *arg,
-            BasicImage *img_l, BasicImage *img_r);
-    static void playlist_ChangePlaylistStatus(void *arg);
 };
 
 #endif // IMAGEVIEWER_HPP

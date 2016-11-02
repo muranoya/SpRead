@@ -10,9 +10,8 @@
 using namespace std;
 
 MainWindow::MainWindow(int argc, char *argv[],
-        int x, int y, int w, int h,
-        const char *title)
-    : Fl_Double_Window(x, y, w, h, title)
+        int x, int y, int w, int h)
+    : Fl_Double_Window(x, y, w, h, App::SOFTWARE_NAME.c_str())
     , menubar(nullptr)
     , imgviewer(nullptr)
 {
@@ -26,7 +25,7 @@ MainWindow::MainWindow(int argc, char *argv[],
 
     applyConfig();
 
-    imgviewer->setChangeStatusCB(updateTitle, this);
+    imgviewer->setChangeStatusCB([this](){ updateWindowTitle(); });
 
     if (argc >= 2)
     {
@@ -53,13 +52,6 @@ MainWindow::hide()
     storeConfig();
     App::SaveConfig();
     Fl_Double_Window::hide();
-}
-
-void
-MainWindow::updateTitle(void *arg)
-{
-    MainWindow *mw = static_cast<MainWindow*>(arg);
-    mw->updateWindowTitle();
 }
 
 void

@@ -4,15 +4,17 @@
 #include <FL/Fl_Multi_Browser.H>
 #include <vector>
 #include <string>
+#include <functional>
 #include "ImageFile.hpp"
 #include "BasicImage.hpp"
 
 class Playlist : public Fl_Multi_Browser
 {
 public:
-    typedef void (*ChangeImagesCB)(void *arg,
-            BasicImage *img_l, BasicImage *img_r);
-    typedef void (*ChangePlaylistStatusCB)(void *arg);
+    typedef std::function<void(BasicImage*, BasicImage*)>
+        ChangeImagesCB;
+    typedef std::function<void(void)>
+        ChangePlaylistStatusCB;
 
     explicit Playlist(int x, int y, int w, int h);
     ~Playlist();
@@ -35,7 +37,6 @@ public:
     int currentIndex(int i) const;
     std::string currentFileName(int i) const;
 
-    void setCallbackUserData(void *arg);
     void setChangeImagesCB(ChangeImagesCB cb);
     void setChangePlaylistStatusCB(ChangePlaylistStatusCB cb);
 
@@ -44,7 +45,6 @@ public:
 private:
     ChangeImagesCB changeImages;
     ChangePlaylistStatusCB changePlaylistStatus;
-    void *cb_arg;
 
     int opendirlevel;
     int img_index;

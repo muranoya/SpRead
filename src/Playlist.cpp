@@ -9,9 +9,8 @@ using namespace std;
 
 Playlist::Playlist(int x, int y, int w, int h)
     : Fl_Multi_Browser(x, y, w, h, "Playlist")
-    , changeImages(nullptr)
-    , changePlaylistStatus(nullptr)
-    , cb_arg(nullptr)
+    , changeImages()
+    , changePlaylistStatus()
     , opendirlevel(99)
     , img_index(-1)
     , img_num(0)
@@ -35,7 +34,7 @@ Playlist::openFiles(const vector<string> &paths)
     }
     if (c > 0)
     {
-        if (changePlaylistStatus) changePlaylistStatus(cb_arg);
+        if (changePlaylistStatus) changePlaylistStatus();
     }
 }
 
@@ -52,7 +51,7 @@ Playlist::nextImage()
     if (old_index != img_index)
     {
         showImages();
-        if (changePlaylistStatus) changePlaylistStatus(cb_arg);
+        if (changePlaylistStatus) changePlaylistStatus();
     }
 }
 
@@ -69,7 +68,7 @@ Playlist::prevImage()
     if (old_index != img_index)
     {
         showImages();
-        if (changePlaylistStatus) changePlaylistStatus(cb_arg);
+        if (changePlaylistStatus) changePlaylistStatus();
     }
 }
 
@@ -80,7 +79,7 @@ Playlist::changeNumOfImages(int n)
     changeStatus(img_index, n);
     if (c)
     {
-        if (changePlaylistStatus) changePlaylistStatus(cb_arg);
+        if (changePlaylistStatus) changePlaylistStatus();
     }
 }
 
@@ -98,7 +97,7 @@ Playlist::clearPlaylist()
 
     changeStatus(-1, 0);
     showImages();
-    if (changePlaylistStatus) changePlaylistStatus(cb_arg);
+    if (changePlaylistStatus) changePlaylistStatus();
 }
 
 void
@@ -151,12 +150,6 @@ Playlist::currentFileName(int i) const
         return d->virtualName();
     }
     return string();
-}
-
-void
-Playlist::setCallbackUserData(void *arg)
-{
-    cb_arg = arg;
 }
 
 void
@@ -252,7 +245,7 @@ Playlist::menu_remove(Fl_Widget *w, void *arg)
         if (contain) pl->showImages();
     }
 
-    if (pl->changePlaylistStatus) pl->changePlaylistStatus(pl->cb_arg);
+    if (pl->changePlaylistStatus) pl->changePlaylistStatus();
 }
 
 void
@@ -269,7 +262,7 @@ Playlist::showSelectedItem()
 
     changeStatus(value()-1, img_num);
     showImages();
-    if (changePlaylistStatus) changePlaylistStatus(cb_arg);
+    if (changePlaylistStatus) changePlaylistStatus();
 }
 
 void
@@ -382,16 +375,16 @@ Playlist::showImages()
     {
         ImageItem *f1 = static_cast<ImageItem*>(data(currentIndex(0)+1));
         ImageItem *f2 = static_cast<ImageItem*>(data(currentIndex(1)+1));
-        changeImages(cb_arg, f1->image(), f2->image());
+        changeImages(f1->image(), f2->image());
     }
     else if (n == 1)
     {
         ImageItem *f1 = static_cast<ImageItem*>(data(currentIndex(0)+1));
-        changeImages(cb_arg, f1->image(), nullptr);
+        changeImages(f1->image(), nullptr);
     }
     else
     {
-        changeImages(cb_arg, nullptr, nullptr);
+        changeImages(nullptr, nullptr);
     }
 }
 
