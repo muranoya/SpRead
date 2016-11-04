@@ -4,6 +4,7 @@
 #include <FL/filename.H>
 #include <algorithm>
 #include <cstring>
+#include <cmath>
 #include "Viewer.hpp"
 #include "image.hpp"
 
