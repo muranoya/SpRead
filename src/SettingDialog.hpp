@@ -6,6 +6,7 @@
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Radio_Round_Button.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Return_Button.H>
 
 class SettingDialog
 {
@@ -19,7 +20,7 @@ private:
     Fl_Group *gPlaylist;
     Fl_Radio_Round_Button *plRBtn_ClickBtn;
     Fl_Radio_Round_Button *plRBtn_ClickPos;
-    Fl_Button *btn_ok;
+    Fl_Return_Button *btn_ok;
     Fl_Button *btn_cancel;
     bool accepted;
 

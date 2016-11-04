@@ -4,6 +4,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Button.H>
+#include <FL/Fl_Return_Button.H>
 
 class MagDialog
 {
@@ -13,7 +14,7 @@ public:
 private:
     Fl_Window *w;
     Fl_Spinner *factor;
-    Fl_Button *btn_ok;
+    Fl_Return_Button *btn_ok;
     Fl_Button *btn_cancel;
     double originalFactor;
     double rsltFactor;

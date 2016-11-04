@@ -75,7 +75,7 @@ SettingDialog::SettingDialog()
         GROUP_Y += gPlaylist->h() + VPADDING;
 
 
-        btn_ok = new Fl_Button(
+        btn_ok = new Fl_Return_Button(
                 w->w() - HPADDING - 60 - HPADDING,
                 GROUP_Y-10,
                 60, ITEM_HEIGHT,

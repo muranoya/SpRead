@@ -25,7 +25,7 @@ MagDialog::MagDialog()
         factor->maximum(10);
         factor->minimum(0.01);
 
-        btn_ok = new Fl_Button(
+        btn_ok = new Fl_Return_Button(
                 w->w() - HPADDING - 60,
                 factor->y() + factor->h() + VPADDING,
                 60,
@@ -47,14 +47,6 @@ MagDialog::MagDialog()
 
 MagDialog::~MagDialog()
 {
-    /*
-    delete w;
-    {
-        delete factor;
-        delete btn_ok;
-        delete btn_cancel;
-    }
-    */
 }
 
 bool
