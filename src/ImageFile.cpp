@@ -1,9 +1,10 @@
 #include <FL/filename.H>
+#include <FL/fl_utf8.h>
 #include <FL/Fl_JPEG_Image.H>
 #include <FL/Fl_PNG_Image.H>
 #include <iostream>
-#include <fstream>
 #include <cstring>
+#include <cstdio>
 #include <algorithm>
 #include <archive.h>
 #include <archive_entry.h>
@@ -264,20 +265,21 @@ ImageFile::loadImageFromPDF(int page) const
 vector<uchar>
 ImageFile::readFile(const string &path)
 {
-    vector<uchar> vec;
-    ifstream rfile;
-    rfile.open(path, ifstream::in | ifstream::binary);
-    if (rfile.fail()) return vec;
-
-    auto fs_s = rfile.seekg(0, ios::beg).tellg(); rfile.clear();
-    auto fs_e = rfile.seekg(0, ios::end).tellg(); rfile.clear();
-    auto fsize = fs_e - fs_s;
-    rfile.seekg(0, ios::beg).clear();
-
-    vec.resize(fsize);
-    rfile.read(reinterpret_cast<char*>(vec.data()), fsize);
-    rfile.close();
-    return vec;
+	vector<uchar> data;
+	FILE *fp = fl_fopen(path.c_str(), "rb");
+	if (!fp)
+	{
+		cerr << "Error: cannot open " << path << endl;
+		return data;
+	}
+	
+	fseek(fp, 0, SEEK_END);
+	auto fsize = ftell(fp);
+	rewind(fp);
+	data.resize(fsize);
+	fread(data.data(), 1, fsize, fp);
+	fclose(fp);
+	return data;
 }
 
 bool
