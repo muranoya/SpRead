@@ -18,7 +18,7 @@
 using namespace std;
 
 // When you add/remove extensions to this array,
-// you have to change the ImageFile::getImageFormat().
+// you have to change the ImageFile::convert().
 // Following arrays strings must be consisted
 // only lower-case.
 static const vector<string> readable_image =

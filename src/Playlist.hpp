@@ -7,8 +7,9 @@
 #include <functional>
 #include "ImageFile.hpp"
 #include "BasicImage.hpp"
+#include "Uncopyable.hpp"
 
-class Playlist : public Fl_Multi_Browser
+class Playlist : public Fl_Multi_Browser, private Uncopyable
 {
 public:
     typedef std::function<void(BasicImage*, BasicImage*)>
@@ -50,9 +51,11 @@ private:
     int img_index;
     int img_num;
 
+    /* context menu */
     static void menu_show(Fl_Widget *w, void *arg);
     static void menu_remove(Fl_Widget *w, void *arg);
     static void menu_clear(Fl_Widget *w, void *arg);
+    /* context menu */
 
     void showSelectedItem();
     void changeStatus(int new_idx, int new_num);

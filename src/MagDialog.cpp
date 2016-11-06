@@ -1,10 +1,12 @@
 #include "MagDialog.hpp"
 
-MagDialog::MagDialog()
+MagDialog::MagDialog(int factor_org)
     : w(nullptr)
     , factor(nullptr)
     , btn_ok(nullptr)
     , btn_cancel(nullptr)
+    , orgFactor(factor_org)
+    , rsltFactor(factor_org)
     , accepted(false)
     , VPADDING(10)
     , HPADDING(10)
@@ -12,6 +14,7 @@ MagDialog::MagDialog()
     , ITEM_PADDING(7)
 {
     w = new Fl_Window(150, 90, "Magnification");
+    w->set_modal();
     w->begin();
     {
         factor = new Fl_Spinner(
@@ -47,18 +50,17 @@ MagDialog::MagDialog()
 
 MagDialog::~MagDialog()
 {
+    delete w;
 }
 
 bool
-MagDialog::getFactor(double ori, double &rslt)
+MagDialog::getFactor(double org, double &rslt)
 {
-    MagDialog dlg;
-    dlg.originalFactor = ori;
-    dlg.w->set_modal();
+    MagDialog dlg(org);
     dlg.w->show();
     while (dlg.w->shown()) Fl::wait();
     rslt = (dlg.accepted ? dlg.rsltFactor
-                         : dlg.originalFactor);
+                         : dlg.orgFactor);
     return dlg.accepted;
 }
 

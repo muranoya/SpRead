@@ -5,8 +5,9 @@
 #include <FL/Fl_Menu_Bar.H>
 #include <FL/Fl_Menu_Item.H>
 #include "ImageViewer.hpp"
+#include "Uncopyable.hpp"
 
-class MainWindow : public Fl_Double_Window
+class MainWindow : public Fl_Double_Window, private Uncopyable
 {
 public:
     explicit MainWindow(int argc, char *argv[],
@@ -19,11 +20,11 @@ private:
     Fl_Menu_Bar *menubar;
     ImageViewer *imgviewer;
 
+    /* menu item */
     static void file_open        (Fl_Widget *w, void *arg);
     static void file_opendir     (Fl_Widget *w, void *arg);
     static void file_config      (Fl_Widget *w, void *arg);
     static void file_exit        (Fl_Widget *w, void *arg);
-
     static void view_actualsize  (Fl_Widget *w, void *arg);
     static void view_fitwindow   (Fl_Widget *w, void *arg);
     static void view_fitwidth    (Fl_Widget *w, void *arg);
@@ -34,8 +35,8 @@ private:
     static void view_nn          (Fl_Widget *w, void *arg);
     static void view_bl          (Fl_Widget *w, void *arg);
     static void view_bc          (Fl_Widget *w, void *arg);
-
-    static void window_playlist(Fl_Widget *w, void *arg);
+    static void window_playlist  (Fl_Widget *w, void *arg);
+    /* menu item */
 
     void updateWindowTitle();
 

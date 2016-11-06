@@ -6,16 +6,15 @@
 class BasicImage
 {
 public:
-    explicit BasicImage(int w, int h, int d);
     explicit BasicImage(int w, int h, int d,
-            const uchar *data);
+            const uchar *data = nullptr);
     explicit BasicImage(const Fl_Image &img);
     BasicImage(const BasicImage &other);
-    BasicImage(BasicImage &&other);
+    BasicImage(BasicImage &&other) noexcept;
     ~BasicImage();
 
     BasicImage &operator=(const BasicImage &other);
-    BasicImage &operator=(BasicImage &&other);
+    BasicImage &operator=(BasicImage &&other) noexcept;
 
     const uchar *bits() const;
     uchar *bits();

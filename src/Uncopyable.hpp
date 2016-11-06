@@ -3,7 +3,7 @@
 
 class Uncopyable
 {
-public:
+protected:
     Uncopyable() {}
     ~Uncopyable() {}
     

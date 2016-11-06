@@ -19,6 +19,7 @@ SettingDialog::SettingDialog()
     , ITEM_PADDING(7)
 {
     w = new Fl_Window(290, 205, "Config");
+    w->set_modal();
     w->begin();
     {
         const int GROUP_W = w->w() - HPADDING*2;
@@ -101,13 +102,13 @@ SettingDialog::SettingDialog()
 
 SettingDialog::~SettingDialog()
 {
+    delete w;
 }
 
 bool
 SettingDialog::openSettingDialog()
 {
     SettingDialog dlg;
-    dlg.w->set_modal();
     dlg.w->show();
     while (dlg.w->shown()) Fl::wait();
     return dlg.accepted;

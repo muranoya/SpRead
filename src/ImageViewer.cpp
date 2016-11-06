@@ -7,6 +7,7 @@ ImageViewer::ImageViewer(int x, int y, int w, int h)
     , changeStatus()
     , viewer(nullptr)
     , playlist(nullptr)
+    , pl_visible(true)
 {
     begin();
     playlist = new Playlist(x, y, 150, h);
@@ -66,24 +67,26 @@ ImageViewer::clearPlaylist()
 void
 ImageViewer::playlistVisible(bool v)
 {
-    if (v)
+    if (v && !pl_visible)
     {
         add(playlist);
         playlist->resize(x(), y(), 150, h());
         viewer->resize(x()+150, y(), w()-150, h());
         playlist->redraw();
+        pl_visible = true;
     }
-    else
+    else if (!v && pl_visible)
     {
         remove(playlist);
         viewer->resize(x(), y(), w(), h());
+        pl_visible = false;
     }
 }
 
 bool
 ImageViewer::isPlaylistVisible() const
 {
-    return static_cast<Fl_Widget*>(playlist)->visible() != 0;
+    return pl_visible;
 }
 
 void

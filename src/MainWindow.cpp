@@ -312,6 +312,7 @@ MainWindow::createMenus()
     menubar = new Fl_Menu_Bar(0, 0, w(), 30);
     menubar->menu(Main_Menu);
     menubar->global();
+    menubar->box(FL_FLAT_BOX);
     end();
 }
 

@@ -21,7 +21,8 @@ nn(const BasicImage &src, double s)
 
     for (int y = 0; y < nh; ++y)
     {
-        const int y0 = std::min(static_cast<int>(std::floor(y/s+0.5)), y1)*w*d;
+        const int y0 = std::min(
+                static_cast<int>(std::floor(y/s+0.5)), y1)*w*d;
         for (int x = 0; x < nw; ++x)
         {
             for (int i = 0; i < d; ++i)

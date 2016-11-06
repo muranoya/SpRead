@@ -2,7 +2,7 @@
 #include <memory>
 #include "BasicImage.hpp"
 
-BasicImage::BasicImage(int w, int h, int d)
+BasicImage::BasicImage(int w, int h, int d, const uchar *data)
     : raw_data(nullptr)
     , align_ptr(nullptr)
     , w(w)
@@ -10,18 +10,7 @@ BasicImage::BasicImage(int w, int h, int d)
     , d(d)
 {
     alloc4ByteAligned(w*h*d, raw_data, align_ptr);
-}
-
-BasicImage::BasicImage(int w, int h, int d,
-        const uchar *data)
-    : raw_data(nullptr)
-    , align_ptr(nullptr)
-    , w(w)
-    , h(h)
-    , d(d)
-{
-    alloc4ByteAligned(w*h*d, raw_data, align_ptr);
-    std::copy(data, data+w*h*d, align_ptr);
+    if (data) std::copy(data, data+w*h*d, align_ptr);
 }
 
 BasicImage::BasicImage(const Fl_Image &img)
@@ -54,15 +43,17 @@ BasicImage::BasicImage(const BasicImage &other)
     std::copy(other.raw_data, other.raw_data+w*h*d, align_ptr);
 }
 
-BasicImage::BasicImage(BasicImage &&other)
+BasicImage::BasicImage(BasicImage &&other) noexcept
+    : raw_data(other.raw_data)
+    , align_ptr(other.align_ptr)
+    , w(other.w)
+    , h(other.h)
+    , d(other.d)
 {
-    raw_data = other.raw_data;
+    if (this == &other) return;
+
     other.raw_data = nullptr;
-    align_ptr = other.align_ptr;
     other.align_ptr = nullptr;
-    w = other.w;
-    h = other.h;
-    d = other.d;
 }
 
 BasicImage::~BasicImage()
@@ -77,18 +68,19 @@ BasicImage::operator=(const BasicImage &other)
     h = other.h;
     d = other.d;
 
-    delete[] raw_data;
-    
+    uchar *old_data = raw_data;
     alloc4ByteAligned(w*h*d, raw_data, align_ptr);
     std::copy(other.raw_data, other.raw_data+w*h*d, align_ptr);
+    delete[] old_data;
     
     return *this;
 }
 
 BasicImage &
-BasicImage::operator=(BasicImage &&other)
+BasicImage::operator=(BasicImage &&other) noexcept
 {
-    delete[] raw_data;
+    if (this == &other) return *this;
+
     raw_data = other.raw_data;
     other.raw_data = nullptr;
     align_ptr = other.align_ptr;
@@ -139,11 +131,12 @@ void
 BasicImage::alloc4ByteAligned(int size,
         uchar *&rawPtr, uchar *&alignPtr)
 {
-    rawPtr = new unsigned char[size+4];
+    const int align_val = 4;
+    rawPtr = new unsigned char[size+align_val];
     
-    std::size_t space = size+4;
+    std::size_t space = size+align_val;
     void *temp_ptr = rawPtr;
-    if (std::align(4, size, temp_ptr, space))
+    if (std::align(align_val, size, temp_ptr, space))
     {
         alignPtr = reinterpret_cast<uchar*>(temp_ptr);
     }

@@ -5,8 +5,9 @@
 #include <FL/Fl_Spinner.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Return_Button.H>
+#include "Uncopyable.hpp"
 
-class MagDialog
+class MagDialog : private Uncopyable
 {
 public:
     static bool getFactor(double org, double &rslt);
@@ -16,7 +17,7 @@ private:
     Fl_Spinner *factor;
     Fl_Return_Button *btn_ok;
     Fl_Button *btn_cancel;
-    double originalFactor;
+    double orgFactor;
     double rsltFactor;
     bool accepted;
 
@@ -25,7 +26,7 @@ private:
     const int ITEM_HEIGHT;
     const int ITEM_PADDING;
 
-    explicit MagDialog();
+    explicit MagDialog(int factor_org);
     ~MagDialog();
 
     static void pushedOkBtn(Fl_Widget *w, void *arg);

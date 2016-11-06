@@ -7,8 +7,9 @@
 #include <FL/Fl_Radio_Round_Button.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Return_Button.H>
+#include "Uncopyable.hpp"
 
-class SettingDialog
+class SettingDialog : private Uncopyable
 {
 public:
     static bool openSettingDialog();

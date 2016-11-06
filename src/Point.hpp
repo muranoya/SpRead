@@ -10,7 +10,7 @@ public:
     explicit Point(int x, int y);
     Point(const Point &) = default;
     Point(Point &&) = default;
-    virtual ~Point();
+    ~Point();
 
     Point &operator=(const Point &) = default;
     Point &operator=(Point &&) = default;

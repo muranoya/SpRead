@@ -9,13 +9,13 @@
 
 class ImageItem;
 
-class ImageFile : public Uncopyable
+class ImageFile : private Uncopyable
 {
 public:
     static ImageFile *create(const std::string &path,
             const std::vector<uchar> &data,
             const std::string &entry = std::string());
-    virtual ~ImageFile();
+    ~ImageFile();
 
     const std::string &path() const;
     BasicImage *loadImage(int index) const;
@@ -71,13 +71,13 @@ private:
             const std::vector<std::string> &extvec);
 };
 
-class ImageItem : public Uncopyable
+class ImageItem : private Uncopyable
 {
 public:
     explicit ImageItem(std::shared_ptr<ImageFile> file,
             int index = -1,
             const std::string &entry_name = std::string());
-    virtual ~ImageItem();
+    ~ImageItem();
 
     std::string physicalPath() const;
     std::string physicalName() const;

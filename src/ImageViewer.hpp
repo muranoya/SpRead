@@ -8,8 +8,9 @@
 #include "Viewer.hpp"
 #include "Playlist.hpp"
 #include "BasicImage.hpp"
+#include "Uncopyable.hpp"
 
-class ImageViewer : public Fl_Group
+class ImageViewer : public Fl_Group, private Uncopyable
 {
 public:
     typedef std::function<void(void)>
@@ -60,6 +61,7 @@ private:
     ChangeStatusCB changeStatus;
     Viewer *viewer;
     Playlist *playlist;
+    bool pl_visible;
 };
 
 #endif // IMAGEVIEWER_HPP

@@ -10,7 +10,7 @@ public:
     explicit Size(int w, int h);
     Size(const Size &) = default;
     Size(Size &&) = default;
-    virtual ~Size();
+    ~Size();
 
     Size &operator=(const Size &) = default;
     Size &operator=(Size &&) = default;

@@ -6,11 +6,11 @@
 #include <vector>
 #include <string>
 #include <functional>
-
 #include "BasicImage.hpp"
 #include "Point.hpp"
+#include "Uncopyable.hpp"
 
-class Viewer : public Fl_Widget
+class Viewer : public Fl_Widget, private Uncopyable
 {
 public:
     typedef std::function<void(void)>
@@ -74,6 +74,7 @@ public:
     void setOpenImageFilesCB(OpenImageFilesCB cb);
     void setChangeViewerStatusCB(ChangeViewerStatusCB cb);
 
+    /* override */
     void draw();
     void resize(int x, int y, int w, int h);
     int handle(int event);
@@ -100,7 +101,6 @@ private:
     Point click2_pos;
     Point move_pos;
     Point img_pos;
-    
     const double drag_detect_time;
 
     static void drag_check(void *arg);
