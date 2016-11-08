@@ -64,6 +64,8 @@ private:
     bool isCurrentIndex(int i) const;
 
     int openFilesAndDirs(const std::vector<std::string> &paths, int level);
+    static int openFilesAndDirs0(const std::vector<std::string> &paths,
+            int level, Playlist *pl);
 
     void showImages();
     BasicImage *loadData(const ImageItem &f);

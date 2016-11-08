@@ -4,6 +4,7 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <functional>
 #include "BasicImage.hpp"
 #include "Uncopyable.hpp"
 
@@ -12,63 +13,36 @@ class ImageItem;
 class ImageFile : private Uncopyable
 {
 public:
-    static ImageFile *create(const std::string &path,
-            const std::vector<uchar> &data,
-            const std::string &entry = std::string());
-    ~ImageFile();
-
-    const std::string &path() const;
-    BasicImage *loadImage(int index) const;
+    typedef std::vector<uchar> RawData;
+    virtual ~ImageFile();
+    
+    virtual const std::string &path() const = 0;
+    virtual BasicImage *loadImage(int index) const = 0;
 
     static bool open(const std::string &path,
             std::vector<ImageItem*> &items);
-    static bool isReadableImage(const std::string &path);
-    static bool isReadableArchive(const std::string &path);
-    static bool isReadableDocument(const std::string &path);
-    static const std::string &readableFormatExt();
+    static bool open(const std::string &path,
+            const RawData &data,
+            std::vector<ImageItem*> &items);
+    static const std::string &readableFormatExtList();
 
 private:
-    enum FileType
+    struct FileInfo
     {
-        FT_INVALID,
-        FT_IMAGE,
-        FT_ARCHIVE,
-#ifdef SUPPORT_PDF
-        FT_PDF,
-#endif
+        const std::function<
+            bool(const std::string&)> openable;
+        const std::function<
+            bool(const std::string&, const RawData&,
+                    std::vector<ImageItem*>&)> open;
+        const std::function<
+            const std::vector<std::string> &(void)> enum_exts;
     };
-    const FileType ftype;
-    const std::string file_path;
-    const std::string entry_name;
-    const std::vector<uchar> data;
+    static const std::vector<FileInfo> imgs;
+    static const std::vector<FileInfo> docs;
+    static const std::vector<FileInfo> archs;
 
-    explicit ImageFile(FileType ft,
-            const std::string &path,
-            const std::string &entry,
-            const std::vector<uchar> &data);
-
-    BasicImage *loadImageFromArchive(int index) const;
-#ifdef SUPPORT_PDF
-    BasicImage *loadImageFromPDF(int page) const;
-#endif
-
-    static std::vector<uchar> readFile(const std::string &path);
-    static bool openImage(const std::string &path,
-            const std::vector<uchar> &data,
-            std::vector<ImageItem*> &items);
-#ifdef SUPPORT_PDF
-    static bool openPdf(const std::string &path,
-            const std::vector<uchar> &data,
-            std::vector<ImageItem*> &items);
-#endif
-    static bool openArchive(const std::string &path,
-            const std::vector<uchar> &data,
-            std::vector<ImageItem*> &items);
-
-    static BasicImage *convert(const std::string &path,
-            const std::vector<uchar> &data);
-    static bool isReadable(const std::string &path,
-            const std::vector<std::string> &extvec);
+    static RawData readFile(const std::string &path);
+    static std::string getExtension(const std::string &path);
 };
 
 class ImageItem : private Uncopyable

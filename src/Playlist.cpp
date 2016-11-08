@@ -328,6 +328,12 @@ Playlist::isCurrentIndex(int idx) const
 int
 Playlist::openFilesAndDirs(const vector<string> &paths, int level)
 {
+    return openFilesAndDirs0(paths, level, this);
+}
+
+int
+Playlist::openFilesAndDirs0(const vector<string> &paths, int level, Playlist *pl)
+{
     int  c = 0;
     if (paths.empty()) return c;
 
@@ -341,7 +347,7 @@ Playlist::openFilesAndDirs(const vector<string> &paths, int level)
             for (auto iter = lists.begin();
                     iter != lists.end(); ++iter)
             {
-                add((*iter)->virtualName().c_str(), *iter);
+                pl->add((*iter)->virtualName().c_str(), *iter);
             }
             c += lists.size();
         }
@@ -357,7 +363,7 @@ Playlist::openFilesAndDirs(const vector<string> &paths, int level)
                 {
                     files.push_back(basedir + dirs[i]->d_name);
                 }
-                c += openFilesAndDirs(files, level-1);
+                c += openFilesAndDirs0(files, level-1, pl);
             }
             fl_filename_free_list(&dirs, ret);
         }

@@ -61,7 +61,7 @@ MainWindow::file_open(Fl_Widget *w, void *arg)
 
     Fl_Native_File_Chooser file_dlg(Fl_Native_File_Chooser::BROWSE_MULTI_FILE);
     file_dlg.title("Select Files");
-    file_dlg.filter(ImageFile::readableFormatExt().c_str());
+    file_dlg.filter(ImageFile::readableFormatExtList().c_str());
 
     if (file_dlg.show() == 0)
     {
