@@ -1,48 +1,51 @@
 #ifndef IMAGEFILE_HPP
 #define IMAGEFILE_HPP
 
-#include <string>
-#include <vector>
 #include <memory>
 #include <functional>
 #include "BasicImage.hpp"
 #include "Uncopyable.hpp"
+#include "SpRead.hpp"
 
 class ImageItem;
 
 class ImageFile : private Uncopyable
 {
 public:
-    typedef std::vector<uchar> RawData;
+    enum OpenResult
+    {
+        OpenError,
+        OpenSuccess,
+        NoCompatible,
+    };
     virtual ~ImageFile();
     
     virtual const std::string &path() const = 0;
     virtual BasicImage *loadImage(int index) const = 0;
 
-    static bool open(const std::string &path,
+    THREAD_SAFE_FUNC static OpenResult open(const std::string &path,
             std::vector<ImageItem*> &items);
-    static bool open(const std::string &path,
-            const RawData &data,
-            std::vector<ImageItem*> &items);
+    THREAD_SAFE_FUNC static OpenResult open(const std::string &path,
+            const RawData &data, std::vector<ImageItem*> &items);
     static const std::string &readableFormatExtList();
 
 private:
     struct FileInfo
     {
-        const std::function<
+        THREAD_SAFE_FUNC const std::function<
             bool(const std::string&)> openable;
-        const std::function<
+        THREAD_SAFE_FUNC const std::function<
             bool(const std::string&, const RawData&,
                     std::vector<ImageItem*>&)> open;
         const std::function<
-            const std::vector<std::string> &(void)> enum_exts;
+            const StringVec &(void)> enum_exts;
     };
     static const std::vector<FileInfo> imgs;
     static const std::vector<FileInfo> docs;
     static const std::vector<FileInfo> archs;
 
-    static RawData readFile(const std::string &path);
-    static std::string getExtension(const std::string &path);
+    THREAD_SAFE_FUNC static RawData readFile(const std::string &path);
+    THREAD_SAFE_FUNC static std::string getExtension(const std::string &path);
 };
 
 class ImageItem : private Uncopyable

@@ -1,6 +1,8 @@
+#include <FL/Fl.H>
 #include <FL/Fl_Menu_Item.H>
 #include <FL/filename.H>
 #include <algorithm>
+#include <future>
 #include "Playlist.hpp"
 
 #include "for_windows_env.hpp"
@@ -23,10 +25,21 @@ Playlist::~Playlist()
 }
 
 void
-Playlist::openFiles(const vector<string> &paths)
+Playlist::openFiles(const StringVec &paths)
 {
     clearPlaylist();
-    int c = openFilesAndDirs(paths, getOpenDirLevel());
+    OpenDialog dlg(parent_window);
+    future<int> f = async(launch::async,
+            [&](int n){
+            int c = openFilesAndDirs(paths, n, this);
+            Fl::lock();
+            dlg.asyncDone();
+            Fl::unlock();
+            return c;
+            }, getOpenDirLevel());
+    dlg.showDialog();
+    int c = f.get();
+
     if (!empty())
     {
         changeStatus(0, 0);
@@ -325,50 +338,62 @@ Playlist::isCurrentIndex(int idx) const
     return false;
 }
 
-int
-Playlist::openFilesAndDirs(const vector<string> &paths, int level)
-{
-    return openFilesAndDirs0(paths, level, this);
-}
-
-int
-Playlist::openFilesAndDirs0(const vector<string> &paths, int level, Playlist *pl)
+THREAD_SAFE_FUNC int
+Playlist::openFilesAndDirs(const StringVec &paths, int level, Playlist *pl)
 {
     int  c = 0;
     if (paths.empty()) return c;
 
-    for (auto iter = paths.cbegin();
-            iter != paths.cend(); ++iter)
+    for (auto iter : paths)
     {
-        if (!fl_filename_isdir(iter->c_str()))
+        if (!fl_filename_isdir(iter.c_str()))
         {
-            vector<ImageItem*> lists;
-            ImageFile::open(*iter, lists);
-            for (auto iter = lists.begin();
-                    iter != lists.end(); ++iter)
-            {
-                pl->add((*iter)->virtualName().c_str(), *iter);
-            }
-            c += lists.size();
+            c += openFilesAndDirs_File(iter, pl);
         }
         else if (level > 0)
         {
             dirent **dirs;
-            int ret = fl_filename_list(iter->c_str(), &dirs, fl_alphasort);
+            int ret = fl_filename_list(iter.c_str(), &dirs, fl_alphasort);
             if (ret > 0)
             {
-                string basedir = *iter + "/";
-                vector<string> files;
+                string basedir = iter + "/";
+                StringVec files;
                 for (int i = 2; i < ret; ++i)
                 {
                     files.push_back(basedir + dirs[i]->d_name);
                 }
-                c += openFilesAndDirs0(files, level-1, pl);
+                c += openFilesAndDirs(files, level-1, pl);
             }
             fl_filename_free_list(&dirs, ret);
         }
     }
     return c;
+}
+
+THREAD_SAFE_FUNC int
+Playlist::openFilesAndDirs_File(const string &path, Playlist *pl)
+{
+    vector<ImageItem*> lists;
+    auto rslt = ImageFile::open(path, lists);
+    if (rslt == ImageFile::OpenSuccess)
+    {
+        struct AsyncData
+        {
+            AsyncData(const vector<ImageItem*> &items, Playlist *pl)
+                : items(items), pl(pl) {}
+            vector<ImageItem*> items;
+            Playlist *pl;
+        };
+        Fl::awake([](void *arg) {
+                AsyncData *ad = static_cast<AsyncData*>(arg);
+                for (auto iter : ad->items)
+                {
+                    ad->pl->add(iter->virtualName().c_str(), iter);
+                }
+                delete ad;
+                }, new AsyncData(lists, pl));
+    }
+    return lists.size();
 }
 
 void

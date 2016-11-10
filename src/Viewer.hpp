@@ -3,9 +3,8 @@
 
 #include <FL/Fl_Widget.H>
 #include <utility>
-#include <vector>
-#include <string>
 #include <functional>
+#include "SpRead.hpp"
 #include "BasicImage.hpp"
 #include "Point.hpp"
 #include "Uncopyable.hpp"
@@ -19,7 +18,7 @@ public:
         PrevImageReqCB;
     typedef std::function<void(int)>
         ChangeNumOfImagesCB;
-    typedef std::function<void(const std::vector<std::string>&)>
+    typedef std::function<void(const StringVec&)>
         OpenImageFilesCB;
     typedef std::function<void(void)>
         ChangeViewerStatusCB;
@@ -111,7 +110,7 @@ private:
     int keyPressEvent();
 
     void splitWithNewLine(const std::string &str,
-            std::vector<std::string> &l);
+            StringVec &l);
 
     void rescaling();
     void drawImageToWidget(const Point &pos, const BasicImage &img);

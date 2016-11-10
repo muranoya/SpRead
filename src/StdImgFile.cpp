@@ -6,7 +6,7 @@
 
 using namespace std;
 
-static const vector<string> exts = {
+static const StringVec exts = {
     "jpg", "jpeg",
     "png",
 };
@@ -47,14 +47,14 @@ StdImgFile::loadImage(int index) const
     return nullptr;
 }
 
-bool
+THREAD_SAFE_FUNC bool
 StdImgFile::isOpenable(const string &ext)
 {
     return any_of(exts.cbegin(), exts.cend(),
             [&ext](const string &x){ return x == ext; });
 }
 
-bool
+THREAD_SAFE_FUNC bool
 StdImgFile::open(const string &path, const RawData &data,
         vector<ImageItem*> &items)
 {
@@ -65,7 +65,7 @@ StdImgFile::open(const string &path, const RawData &data,
     return true;
 }
 
-const vector<string> &
+const StringVec &
 StdImgFile::extList()
 {
     return exts;

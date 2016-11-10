@@ -2,13 +2,12 @@
 #define IMAGEVIEWER_HPP
 
 #include <FL/Fl_Group.H>
-#include <vector>
-#include <string>
 #include <functional>
 #include "Viewer.hpp"
 #include "Playlist.hpp"
 #include "BasicImage.hpp"
 #include "Uncopyable.hpp"
+#include "SpRead.hpp"
 
 class ImageViewer : public Fl_Group, private Uncopyable
 {
@@ -19,7 +18,7 @@ public:
     explicit ImageViewer(int x, int y, int w, int h);
     ~ImageViewer();
 
-    void openFiles(const std::vector<std::string> &paths);
+    void openFiles(const StringVec &paths);
     void clearPlaylist();
 
     void playlistVisible(bool v);

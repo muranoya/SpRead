@@ -1,7 +1,5 @@
 #include <FL/Fl_Native_File_Chooser.H>
 #include <cstdlib>
-#include <string>
-#include <vector>
 #include "MainWindow.hpp"
 #include "ConfigDialog.hpp"
 #include "MagDialog.hpp"
@@ -29,7 +27,7 @@ MainWindow::MainWindow(int argc, char *argv[],
 
     if (argc >= 2)
     {
-        vector<string> paths;
+        StringVec paths;
         for (int i = 1; i < argc; ++i)
         {
             paths.push_back(argv[i]);
@@ -65,7 +63,7 @@ MainWindow::file_open(Fl_Widget *w, void *arg)
 
     if (file_dlg.show() == 0)
     {
-        vector<string> files;
+        StringVec files;
         for (int i = 0; i < file_dlg.count(); ++i)
         {
             string filename = file_dlg.filename(i);
@@ -85,7 +83,7 @@ MainWindow::file_opendir(Fl_Widget *w, void *arg)
 
     if (dir_dlg.show() == 0)
     {
-        vector<string> dirs;
+        StringVec dirs;
         for (int i = 0; i < dir_dlg.count(); ++i)
         {
             string dirname = dir_dlg.filename(i);

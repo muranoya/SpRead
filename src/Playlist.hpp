@@ -2,12 +2,12 @@
 #define PLAYLIST_HPP
 
 #include <FL/Fl_Multi_Browser.H>
-#include <vector>
-#include <string>
 #include <functional>
 #include "ImageFile.hpp"
 #include "BasicImage.hpp"
 #include "Uncopyable.hpp"
+#include "OpenDialog.hpp"
+#include "SpRead.hpp"
 
 class Playlist : public Fl_Multi_Browser, private Uncopyable
 {
@@ -20,7 +20,7 @@ public:
     explicit Playlist(int x, int y, int w, int h);
     ~Playlist();
 
-    void openFiles(const std::vector<std::string> &paths);
+    void openFiles(const StringVec &paths);
 
     void nextImage();
     void prevImage();
@@ -63,9 +63,10 @@ private:
     bool isValidIndex(int i) const;
     bool isCurrentIndex(int i) const;
 
-    int openFilesAndDirs(const std::vector<std::string> &paths, int level);
-    static int openFilesAndDirs0(const std::vector<std::string> &paths,
-            int level, Playlist *pl);
+    THREAD_SAFE_FUNC static int openFilesAndDirs(
+            const StringVec &paths, int level, Playlist *pl);
+    THREAD_SAFE_FUNC static int openFilesAndDirs_File(
+            const std::string &path, Playlist *pl);
 
     void showImages();
     BasicImage *loadData(const ImageItem &f);

@@ -11,6 +11,7 @@ main(int argc, char *argv[])
             Config::mw_size_w, Config::mw_size_h);
     Fl::visual(FL_RGB);
     mw->show();
+    Fl::lock();
     return Fl::run();
 }
 

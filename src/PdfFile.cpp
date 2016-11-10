@@ -10,7 +10,7 @@
 
 using namespace std;
 
-static const vector<string> exts = {
+static const StringVec exts = {
     "pdf",
 };
 
@@ -76,7 +76,7 @@ PdfFile::loadImage(int index) const
 #endif
 }
 
-bool
+THREAD_SAFE_FUNC bool
 PdfFile::isOpenable(const string &ext)
 {
 #ifdef SUPPORT_PDF
@@ -87,7 +87,7 @@ PdfFile::isOpenable(const string &ext)
 #endif
 }
 
-bool
+THREAD_SAFE_FUNC bool
 PdfFile::open(const string &path, const RawData &data, vector<ImageItem*> &items)
 {
 #ifdef SUPPORT_PDF
@@ -115,7 +115,7 @@ PdfFile::open(const string &path, const RawData &data, vector<ImageItem*> &items
 #endif
 }
 
-const vector<string> &
+const StringVec &
 PdfFile::extList()
 {
     return exts;

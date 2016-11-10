@@ -11,10 +11,10 @@ public:
     const std::string &path() const;
     BasicImage *loadImage(int index) const;
 
-    static bool isOpenable(const std::string &ext);
-    static bool open(const std::string &path, const RawData &data,
-            std::vector<ImageItem*> &items);
-    static const std::vector<std::string> &extList();
+    THREAD_SAFE_FUNC static bool isOpenable(const std::string &ext);
+    THREAD_SAFE_FUNC static bool open(const std::string &path,
+            const RawData &data, std::vector<ImageItem*> &items);
+    static const StringVec &extList();
 
 private:
     const std::string file_path;

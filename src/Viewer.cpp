@@ -307,7 +307,7 @@ Viewer::handle(int event)
             return 1;
         case FL_PASTE:
             {
-                vector<string> paths;
+                StringVec paths;
                 string str = Fl::event_text();
                 splitWithNewLine(str, paths);
                 if (openImageFiles) openImageFiles(paths);
@@ -433,7 +433,7 @@ Viewer::keyPressEvent()
 
 void
 Viewer::splitWithNewLine(const string &str,
-        vector<string> &l)
+        StringVec &l)
 {
     static char buf[FL_PATH_MAX];
     for (size_t i = 0, p = 0; i < str.length(); ++i)

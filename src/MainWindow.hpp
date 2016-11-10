@@ -6,6 +6,7 @@
 #include <FL/Fl_Menu_Item.H>
 #include "ImageViewer.hpp"
 #include "Uncopyable.hpp"
+#include "SpRead.hpp"
 
 class MainWindow : public Fl_Double_Window, private Uncopyable
 {

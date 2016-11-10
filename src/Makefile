@@ -11,6 +11,7 @@ OBJS = main.o \
 	   MainWindow.o \
 	   ConfigDialog.o \
 	   MagDialog.o \
+	   OpenDialog.o \
 	   Viewer.o \
 	   Playlist.o \
 	   ImageViewer.o \
@@ -24,6 +25,7 @@ SRCS = main.cpp \
 	   MainWindow.cpp \
 	   ConfigDialog.cpp \
 	   MagDialog.cpp \
+	   OpenDialog.cpp \
 	   Viewer.cpp \
 	   Playlist.cpp \
 	   ImageViewer.cpp \
@@ -85,6 +87,7 @@ ConfigDialog.o: ConfigDialog.cpp ConfigDialog.hpp \
 	Uncopyable.hpp
 MagDialog.o: MagDialog.cpp MagDialog.hpp \
 	Uncopyable.hpp
+OpenDialog.o: OpenDialog.cpp OpenDialog.hpp
 ArchiveFile.o: ArchiveFile.cpp ArchiveFile.hpp \
 	ImageFile.hpp
 StdImgFile.o: StdImgFile.cpp StdImgFile.hpp \

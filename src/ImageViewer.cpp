@@ -28,7 +28,7 @@ ImageViewer::ImageViewer(int x, int y, int w, int h)
             playlist->changeNumOfImages(n);
             });
     viewer->setOpenImageFilesCB(
-            [this](const vector<string> &paths) {
+            [this](const StringVec &paths) {
             playlist->openFiles(paths);
             });
     viewer->setChangeViewerStatusCB(
@@ -53,7 +53,7 @@ ImageViewer::~ImageViewer()
 }
 
 void
-ImageViewer::openFiles(const vector<string> &paths)
+ImageViewer::openFiles(const StringVec &paths)
 {
     playlist->openFiles(paths);
 }

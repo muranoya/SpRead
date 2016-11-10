@@ -6,20 +6,20 @@
 
 using namespace std;
 
-static const vector<string> exts = {
+static const StringVec exts = {
     "zip", "tar", "7z", "cab",
     "rar", "lha", "lzh",
 };
 
-bool
+THREAD_SAFE_FUNC bool
 ArchiveFile::isOpenable(const string &ext)
 {
     return any_of(exts.cbegin(), exts.cend(),
             [&ext](const string &x) { return x == ext; });
 }
 
-bool
-ArchiveFile::open(const string &path, const ImageFile::RawData &data,
+THREAD_SAFE_FUNC bool
+ArchiveFile::open(const string &path, const RawData &data,
         vector<ImageItem*> &items)
 {
     struct archive *a = archive_read_new();
@@ -37,7 +37,7 @@ ArchiveFile::open(const string &path, const ImageFile::RawData &data,
     while (archive_read_next_header(a, &ae) == ARCHIVE_OK)
     {
         string entry_name = archive_entry_pathname(ae);
-        ImageFile::RawData data;
+        RawData data;
         const void *buf;
         size_t len;
         la_int64_t offset;
@@ -58,7 +58,7 @@ ArchiveFile::open(const string &path, const ImageFile::RawData &data,
     return true;
 }
 
-const vector<string> &
+const StringVec &
 ArchiveFile::extList()
 {
     return exts;

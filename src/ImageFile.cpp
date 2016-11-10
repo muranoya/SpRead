@@ -11,6 +11,9 @@
 
 using namespace std;
 
+// Functors that register in the following vectors must be thread-safe,
+// because there will be called from the Playlist::openFilesAndDirs function
+// and it runs in a thread different from the main-thread.
 const std::vector<ImageFile::FileInfo> ImageFile::imgs = {
     {
         StdImgFile::isOpenable,
@@ -37,11 +40,11 @@ ImageFile::~ImageFile()
 {
 }
 
-bool
+THREAD_SAFE_FUNC ImageFile::OpenResult
 ImageFile::open(const string &path, vector<ImageItem*> &items)
 {
     string ext = getExtension(path);
-    if (ext.empty()) return false;
+    if (ext.empty()) return NoCompatible;
 
     const vector<vector<FileInfo>> files = {
         imgs,
@@ -55,20 +58,26 @@ ImageFile::open(const string &path, vector<ImageItem*> &items)
         {
             if (fi.openable(ext))
             {
-                fi.open(path, readFile(path), items);
-                return true;
+                if (fi.open(path, readFile(path), items))
+                {
+                    return OpenSuccess;
+                }
+                else
+                {
+                    return OpenError;
+                }
             }
         }
     }
-    return false;
+    return NoCompatible;
 }
 
-bool
+THREAD_SAFE_FUNC ImageFile::OpenResult
 ImageFile::open(const string &path, const RawData &data,
         vector<ImageItem*> &items)
 {
     string ext = getExtension(path);
-    if (ext.empty()) return false;
+    if (ext.empty()) return NoCompatible;
 
     const vector<vector<FileInfo>> files = {
         imgs,
@@ -82,12 +91,18 @@ ImageFile::open(const string &path, const RawData &data,
         {
             if (fi.openable(ext))
             {
-                fi.open(path, data, items);
-                return true;
+                if (fi.open(path, data, items))
+                {
+                    return OpenSuccess;
+                }
+                else
+                {
+                    return OpenError;
+                }
             }
         }
     }
-    return false;
+    return NoCompatible;
 }
 
 const string &
@@ -118,7 +133,7 @@ ImageFile::readableFormatExtList()
     return extlist;
 }
 
-ImageFile::RawData
+THREAD_SAFE_FUNC RawData
 ImageFile::readFile(const string &path)
 {
     RawData data;
@@ -139,7 +154,7 @@ ImageFile::readFile(const string &path)
     return data;
 }
 
-string
+THREAD_SAFE_FUNC string
 ImageFile::getExtension(const string &path)
 {
     string ext = fl_filename_ext(path.c_str());
