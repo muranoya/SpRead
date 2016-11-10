@@ -52,7 +52,11 @@ PdfFile::loadImage(int index) const
         return nullptr;
     }
     poppler::page_renderer renderer;
-    poppler::image img = renderer.render_page(p, 144.0, 144.0);
+    renderer.set_render_hints(
+            poppler::page_renderer::antialiasing |
+            poppler::page_renderer::text_antialiasing |
+            poppler::page_renderer::text_hinting);
+    poppler::image img = renderer.render_page(p, 120.0, 120.0);
     int d;
     switch (img.format())
     {
