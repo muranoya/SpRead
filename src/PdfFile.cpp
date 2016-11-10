@@ -66,6 +66,31 @@ PdfFile::loadImage(int index) const
             return nullptr;
     }
 
+    // convert the image from 32bit-color to 24bit-color
+    if (d == 4)
+    {
+        uchar *bits3 = reinterpret_cast<uchar*>(img.data());
+        const uchar *bits4 = bits3;
+        int w = img.width();
+        int h = img.height();
+        for (int y = 0; y < h; ++y)
+        {
+            for (int x = 0; x < w; ++x)
+            {
+                uchar r = bits4[0];
+                uchar g = bits4[1];
+                uchar b = bits4[2];
+                //uchar a = bits4[3];
+                bits3[0] = b;
+                bits3[1] = g;
+                bits3[2] = r;
+                bits3 += 3;
+                bits4 += 4;
+            }
+        }
+        d = 3;
+    }
+
     BasicImage *bimg = new BasicImage(img.width(), img.height(), d,
             reinterpret_cast<const uchar*>(img.const_data()));
     delete doc;
