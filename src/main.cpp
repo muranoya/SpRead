@@ -1,14 +1,14 @@
 #include <FL/Fl.H>
-#include "App.hpp"
+#include "Config.hpp"
 #include "MainWindow.hpp"
 
 int
 main(int argc, char *argv[])
 {
-    App::LoadConfig();
+    Config::LoadConfig();
     MainWindow *mw = new MainWindow(argc, argv,
-            App::mw_pos_x, App::mw_pos_y,
-            App::mw_size_w, App::mw_size_h);
+            Config::mw_pos_x,  Config::mw_pos_y,
+            Config::mw_size_w, Config::mw_size_h);
     Fl::visual(FL_RGB);
     mw->show();
     return Fl::run();

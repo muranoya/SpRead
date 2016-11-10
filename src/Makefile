@@ -7,9 +7,9 @@ LINK     = $(CXX)
 TARGET = SpRead
 OBJS = main.o \
 	   Point.o \
-	   App.o \
+	   Config.o \
 	   MainWindow.o \
-	   SettingDialog.o \
+	   ConfigDialog.o \
 	   MagDialog.o \
 	   Viewer.o \
 	   Playlist.o \
@@ -20,9 +20,9 @@ OBJS = main.o \
 
 SRCS = main.cpp \
 	   Point.cpp \
-	   App.cpp \
+	   Config.cpp \
 	   MainWindow.cpp \
-	   SettingDialog.cpp \
+	   ConfigDialog.cpp \
 	   MagDialog.cpp \
 	   Viewer.cpp \
 	   Playlist.cpp \
@@ -42,15 +42,15 @@ all: $(TARGET)
 $(TARGET): $(OBJS)
 
 main.o: main.cpp \
-	App.hpp \
+	Config.hpp \
 	MainWindow.hpp
 Point.o: Point.cpp Point.hpp
-App.o: App.cpp App.hpp \
+Config.o: Config.cpp Config.hpp \
 	Viewer.hpp
 MainWindow.o: MainWindow.cpp MainWindow.hpp \
 	ImageViewer.hpp \
-	App.hpp \
-	SettingDialog.hpp \
+	Config.hpp \
+	ConfigDialog.hpp \
 	MagDialog.hpp \
 	Uncopyable.hpp
 ImageFile.o: ImageFile.cpp ImageFile.hpp \
@@ -79,8 +79,8 @@ image.o: image.cpp image.hpp \
 	BasicImage.hpp \
 	for_windows_env.hpp
 BasicImage.o: BasicImage.cpp BasicImage.hpp
-SettingDialog.o: SettingDialog.cpp SettingDialog.hpp \
-	App.hpp \
+ConfigDialog.o: ConfigDialog.cpp ConfigDialog.hpp \
+	Config.hpp \
 	Viewer.hpp \
 	Uncopyable.hpp
 MagDialog.o: MagDialog.cpp MagDialog.hpp \

@@ -3,15 +3,15 @@
 #include <string>
 #include <vector>
 #include "MainWindow.hpp"
-#include "SettingDialog.hpp"
+#include "ConfigDialog.hpp"
 #include "MagDialog.hpp"
-#include "App.hpp"
+#include "Config.hpp"
 
 using namespace std;
 
 MainWindow::MainWindow(int argc, char *argv[],
         int x, int y, int w, int h)
-    : Fl_Double_Window(x, y, w, h, App::SOFTWARE_NAME.c_str())
+    : Fl_Double_Window(x, y, w, h, Config::SOFTWARE_NAME.c_str())
     , menubar(nullptr)
     , imgviewer(nullptr)
 {
@@ -50,7 +50,7 @@ void
 MainWindow::hide()
 {
     storeConfig();
-    App::SaveConfig();
+    Config::SaveConfig();
     Fl_Double_Window::hide();
 }
 
@@ -99,12 +99,12 @@ void
 MainWindow::file_config(Fl_Widget *w, void *arg)
 {
     MainWindow *mw = static_cast<MainWindow*>(arg);
-    bool rslt = SettingDialog::openSettingDialog();
+    bool rslt = ConfigDialog::openConfigDialog(mw);
     if (rslt)
     {
-        mw->imgviewer->setOpenDirLevel(App::view_openlevel);
+        mw->imgviewer->setOpenDirLevel(Config::view_openlevel);
         mw->imgviewer->setFeedPageMode(
-                static_cast<Viewer::FeedPageMode>(App::view_feedpage));
+                static_cast<Viewer::FeedPageMode>(Config::view_feedpage));
     }
 }
 
@@ -219,7 +219,7 @@ MainWindow::updateWindowTitle()
 {
     if (imgviewer->empty())
     {
-        label(App::SOFTWARE_NAME.c_str());
+        label(Config::SOFTWARE_NAME.c_str());
         return;
     }
 
@@ -319,19 +319,19 @@ MainWindow::createMenus()
 void
 MainWindow::applyConfig()
 {
-    resize(App::mw_pos_x, App::mw_pos_y,
-            App::mw_size_w, App::mw_size_h);
+    resize(Config::mw_pos_x,  Config::mw_pos_y,
+           Config::mw_size_w, Config::mw_size_h);
     imgviewer->setScalingMode(
-            static_cast<Viewer::ScalingMode>(App::view_ipix));
+            static_cast<Viewer::ScalingMode>(Config::view_ipix));
     imgviewer->setViewMode(
-            static_cast<Viewer::ViewMode>(App::view_scalem), App::view_scale);
-    imgviewer->setSpreadView(App::view_spread);
-    imgviewer->setRightbindingView(App::view_rbind);
-    imgviewer->setAutoAdjustSpread(App::view_autospread);
+            static_cast<Viewer::ViewMode>(Config::view_scalem), Config::view_scale);
+    imgviewer->setSpreadView(Config::view_spread);
+    imgviewer->setRightbindingView(Config::view_rbind);
+    imgviewer->setAutoAdjustSpread(Config::view_autospread);
     imgviewer->setFeedPageMode(
-            static_cast<Viewer::FeedPageMode>(App::view_feedpage));
-    imgviewer->setOpenDirLevel(App::view_openlevel);
-    imgviewer->playlistVisible(App::pl_visible);
+            static_cast<Viewer::FeedPageMode>(Config::view_feedpage));
+    imgviewer->setOpenDirLevel(Config::view_openlevel);
+    imgviewer->playlistVisible(Config::pl_visible);
 
     switch (imgviewer->getScalingMode())
     {
@@ -372,20 +372,20 @@ MainWindow::applyConfig()
 void
 MainWindow::storeConfig()
 {
-    App::mw_size_w = w();
-    App::mw_size_h = h();
-    App::mw_pos_x  = x();
-    App::mw_pos_y  = y();
+    Config::mw_size_w = w();
+    Config::mw_size_h = h();
+    Config::mw_pos_x  = x();
+    Config::mw_pos_y  = y();
 
-    App::view_scalem     = imgviewer->getViewMode();
-    App::view_scale      = imgviewer->getCustomScaleFactor();
-    App::view_ipix       = imgviewer->getScalingMode();
-    App::view_spread     = imgviewer->getSpreadView();
-    App::view_autospread = imgviewer->getAutoAdjustSpread();
-    App::view_rbind      = imgviewer->getRightbindingView();
-    App::view_openlevel  = imgviewer->getOpenDirLevel();
-    App::view_feedpage   = imgviewer->getFeedPageMode();
+    Config::view_scalem     = imgviewer->getViewMode();
+    Config::view_scale      = imgviewer->getCustomScaleFactor();
+    Config::view_ipix       = imgviewer->getScalingMode();
+    Config::view_spread     = imgviewer->getSpreadView();
+    Config::view_autospread = imgviewer->getAutoAdjustSpread();
+    Config::view_rbind      = imgviewer->getRightbindingView();
+    Config::view_openlevel  = imgviewer->getOpenDirLevel();
+    Config::view_feedpage   = imgviewer->getFeedPageMode();
 
-    App::pl_visible      = imgviewer->isPlaylistVisible();
+    Config::pl_visible      = imgviewer->isPlaylistVisible();
 }
 

@@ -1,10 +1,10 @@
-#ifndef APP_HPP
-#define APP_HPP
+#ifndef CONFIG_HPP
+#define CONFIG_HPP
 
 #include <FL/Fl_Preferences.H>
 #include <string>
 
-class App
+class Config
 {
 public:
     // Group - MainWindow
@@ -35,7 +35,7 @@ public:
     static void LoadConfig();
 
 private:
-    App() = delete;
+    Config() = delete;
 
     static char g(Fl_Preferences &s,
             const char *entry, bool &value,
@@ -43,4 +43,4 @@ private:
     static void checkRange(int &v, int min, int max);
 };
 
-#endif // APP_HPP
+#endif // CONFIG_HPP

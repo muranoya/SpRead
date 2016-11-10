@@ -1,31 +1,31 @@
-#include "App.hpp"
+#include "Config.hpp"
 #include "Viewer.hpp"
 
 using namespace std;
 
-int App::mw_size_w;
-int App::mw_size_h;
-int App::mw_pos_x;
-int App::mw_pos_y;
+int Config::mw_size_w;
+int Config::mw_size_h;
+int Config::mw_pos_x;
+int Config::mw_pos_y;
 
-int       App::view_scalem;
-double    App::view_scale;
-int       App::view_ipix;
-bool      App::view_spread;
-bool      App::view_autospread;
-bool      App::view_rbind;
-int       App::view_openlevel;
-const int App::view_openlevel_max = 99;
-const int App::view_openlevel_min = 0;
-int       App::view_feedpage;
+int       Config::view_scalem;
+double    Config::view_scale;
+int       Config::view_ipix;
+bool      Config::view_spread;
+bool      Config::view_autospread;
+bool      Config::view_rbind;
+int       Config::view_openlevel;
+const int Config::view_openlevel_max = 99;
+const int Config::view_openlevel_min = 0;
+int       Config::view_feedpage;
 
-bool      App::pl_visible;
+bool      Config::pl_visible;
 
-const string App::SOFTWARE_ORG("muranoya.net");
-const string App::SOFTWARE_NAME("SpRead");
+const string Config::SOFTWARE_ORG("muranoya.net");
+const string Config::SOFTWARE_NAME("SpRead");
 
 void
-App::SaveConfig()
+Config::SaveConfig()
 {
     Fl_Preferences s(Fl_Preferences::USER,
             SOFTWARE_ORG.c_str(),
@@ -54,7 +54,7 @@ App::SaveConfig()
 }
 
 void
-App::LoadConfig()
+Config::LoadConfig()
 {
     Fl_Preferences s(Fl_Preferences::USER,
             SOFTWARE_ORG.c_str(),
@@ -84,7 +84,7 @@ App::LoadConfig()
 }
 
 char
-App::g(Fl_Preferences &s, const char *entry,
+Config::g(Fl_Preferences &s, const char *entry,
         bool &value, bool defaultValue)
 {
     int x;
@@ -94,7 +94,7 @@ App::g(Fl_Preferences &s, const char *entry,
 }
 
 void
-App::checkRange(int &v, int min, int max)
+Config::checkRange(int &v, int min, int max)
 {
     if (v < min) v = min;
     if (max < v) v = max;

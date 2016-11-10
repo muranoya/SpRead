@@ -1,9 +1,9 @@
 #include <FL/Fl.H>
-#include "SettingDialog.hpp"
-#include "App.hpp"
+#include "ConfigDialog.hpp"
+#include "Config.hpp"
 #include "Viewer.hpp"
 
-SettingDialog::SettingDialog()
+ConfigDialog::ConfigDialog(const Fl_Window *parent)
     : w(nullptr)
     , gOpenDir(nullptr)
     , opendirSpinner(nullptr)
@@ -20,6 +20,12 @@ SettingDialog::SettingDialog()
 {
     w = new Fl_Window(290, 205, "Config");
     w->set_modal();
+    if (parent)
+    {
+        w->resize(parent->x()+parent->w()/2-w->w()/2,
+                  parent->y()+parent->h()/2-w->h()/2,
+                  w->w(), w->h());
+    }
     w->begin();
     {
         const int GROUP_W = w->w() - HPADDING*2;
@@ -46,9 +52,9 @@ SettingDialog::SettingDialog()
                     ITEM_HEIGHT,
                     "Directory Depth:");
             opendirSpinner->maximum(
-                    static_cast<double>(App::view_openlevel_max));
+                    static_cast<double>(Config::view_openlevel_max));
             opendirSpinner->minimum(
-                    static_cast<double>(App::view_openlevel_min));
+                    static_cast<double>(Config::view_openlevel_min));
         }
         gOpenDir->end();
         GROUP_Y += gOpenDir->h() + VPADDING;
@@ -100,58 +106,58 @@ SettingDialog::SettingDialog()
     loadSettings();
 }
 
-SettingDialog::~SettingDialog()
+ConfigDialog::~ConfigDialog()
 {
     delete w;
 }
 
 bool
-SettingDialog::openSettingDialog()
+ConfigDialog::openConfigDialog(const Fl_Window *parent)
 {
-    SettingDialog dlg;
+    ConfigDialog dlg(parent);
     dlg.w->show();
     while (dlg.w->shown()) Fl::wait();
     return dlg.accepted;
 }
 
 void
-SettingDialog::pushedOkBtn(Fl_Widget *w, void *arg)
+ConfigDialog::pushedOkBtn(Fl_Widget *w, void *arg)
 {
-    SettingDialog *dlg = static_cast<SettingDialog*>(arg);
+    ConfigDialog *dlg = static_cast<ConfigDialog*>(arg);
     dlg->saveSettings();
     dlg->accepted = true;
     dlg->w->hide();
 }
 
 void
-SettingDialog::pushedCancelBtn(Fl_Widget *w, void *arg)
+ConfigDialog::pushedCancelBtn(Fl_Widget *w, void *arg)
 {
-    SettingDialog *dlg = static_cast<SettingDialog*>(arg);
+    ConfigDialog *dlg = static_cast<ConfigDialog*>(arg);
     dlg->accepted = false;
     dlg->w->hide();
 }
 
 void
-SettingDialog::loadSettings()
+ConfigDialog::loadSettings()
 {
-    opendirSpinner->value(App::view_openlevel);
+    opendirSpinner->value(Config::view_openlevel);
     plRBtn_ClickBtn->value(
-            App::view_feedpage == Viewer::MouseButton);
+            Config::view_feedpage == Viewer::MouseButton);
     plRBtn_ClickPos->value(
-            App::view_feedpage == Viewer::MouseClickPosition);
+            Config::view_feedpage == Viewer::MouseClickPosition);
 }
 
 void
-SettingDialog::saveSettings()
+ConfigDialog::saveSettings()
 {
-    App::view_openlevel = static_cast<int>(opendirSpinner->value());
+    Config::view_openlevel = static_cast<int>(opendirSpinner->value());
     if (plRBtn_ClickBtn->value())
     {
-        App::view_feedpage = Viewer::MouseButton;
+        Config::view_feedpage = Viewer::MouseButton;
     }
     else
     {
-        App::view_feedpage = Viewer::MouseClickPosition;
+        Config::view_feedpage = Viewer::MouseClickPosition;
     }
 }
 

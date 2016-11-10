@@ -1,5 +1,5 @@
-#ifndef SETTINGSDIALOG_HPP
-#define SETTINGSDIALOG_HPP
+#ifndef CONFIGDIALOG_HPP
+#define CONFIGDIALOG_HPP
 
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Group.H>
@@ -9,10 +9,10 @@
 #include <FL/Fl_Return_Button.H>
 #include "Uncopyable.hpp"
 
-class SettingDialog : private Uncopyable
+class ConfigDialog : private Uncopyable
 {
 public:
-    static bool openSettingDialog();
+    static bool openConfigDialog(const Fl_Window *parent = 0);
 
 private:
     Fl_Window *w;
@@ -30,8 +30,8 @@ private:
     const int ITEM_HEIGHT;
     const int ITEM_PADDING;
 
-    explicit SettingDialog();
-    ~SettingDialog();
+    explicit ConfigDialog(const Fl_Window *parent = 0);
+    ~ConfigDialog();
 
     static void pushedOkBtn(Fl_Widget *w, void *arg);
     static void pushedCancelBtn(Fl_Widget *w, void *arg);
@@ -40,4 +40,4 @@ private:
     void saveSettings();
 };
 
-#endif // SETTINGSDIALOG_HPP
+#endif // CONFIGDIALOG_HPP
