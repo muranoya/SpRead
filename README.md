@@ -26,7 +26,6 @@ It is written in C++ using FLTK. So, SpRead can run on Windows, OS X and *NIX.
   1. $ make
 
 ## TODO
-* 重たい画像処理の並列処理化およびSIMD化
 * フィルタの実装
  * アンシャープ
  * アンチエイリアス
@@ -37,6 +36,5 @@ It is written in C++ using FLTK. So, SpRead can run on Windows, OS X and *NIX.
 * アプリケーショのアイコンを追加する
 * 背景色指定
 * サムネイル表示モード
-* 読み込みダイアログの追加
 * EXIF情報の処理
 * モノクロモード
