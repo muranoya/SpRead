@@ -16,6 +16,8 @@ public:
     BasicImage &operator=(const BasicImage &other);
     BasicImage &operator=(BasicImage &&other) noexcept;
 
+    void convertToMono();
+
     const uchar *bits() const;
     uchar *bits();
 

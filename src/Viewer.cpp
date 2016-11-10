@@ -29,6 +29,7 @@ Viewer::Viewer(int x, int y, int w, int h)
     , rbind_view(false)
     , autospread(false)
     , fp_mode(MouseButton)
+    , monomode(false)
     , is_drag_img(false)
     , click_pos()
     , click2_pos()
@@ -55,7 +56,9 @@ Viewer::showImages(BasicImage *img_l, BasicImage *img_r)
 {
     delete based_imgs[0];
     delete based_imgs[1];
+    if (img_l && monomode) img_l->convertToMono();
     based_imgs[0] = img_l;
+    if (img_r && monomode) img_r->convertToMono();
     based_imgs[1] = img_r;
     img_pos = Point(0, 0);
     rescaling();
@@ -160,6 +163,18 @@ Viewer::getFeedPageMode() const
 }
 
 void
+Viewer::setMonochromeMode(bool mode)
+{
+    monomode = mode;
+}
+
+bool
+Viewer::getMonochromeMode() const
+{
+    return monomode;
+}
+
+void
 Viewer::setNextImageCB(NextImageReqCB cb)
 {
     nextImgReq = cb;
@@ -215,21 +230,6 @@ Viewer::draw()
     fl_push_clip(x(), y(), w(), h());
     switch (getViewMode())
     {
-        case ActualSize:
-        {
-            img_pos += move_pos - click2_pos;
-            click2_pos = move_pos;
-            Point pos(img_pos.x() + x(),
-                    img_pos.y() + (cimg_h - imgs[0]->height())/2 + y());
-            drawImageToWidget(pos, *imgs[0]);
-            if (img_num == 2)
-            {
-                pos = Point(pos.x() + imgs[0]->width(),
-                        img_pos.y() + (cimg_h - imgs[1]->height())/2 + y());
-                drawImageToWidget(pos, *imgs[1]);
-            }
-        }
-        break;
         case FittingWindow:
         {
             Point pos((w() - cimg_w)/2 + x(),
@@ -258,6 +258,7 @@ Viewer::draw()
             }
         }
         break;
+        case ActualSize:
         case CustomScale:
         {
             img_pos += move_pos - click2_pos;

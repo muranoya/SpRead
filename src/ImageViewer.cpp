@@ -175,6 +175,18 @@ ImageViewer::getFeedPageMode() const
 }
 
 void
+ImageViewer::setMonochromeMode(bool mode)
+{
+    viewer->setMonochromeMode(mode);
+}
+
+bool
+ImageViewer::getMonochromeMode() const
+{
+    return viewer->getMonochromeMode();
+}
+
+void
 ImageViewer::setOpenDirLevel(int n)
 {
     playlist->setOpenDirLevel(n);

@@ -46,6 +46,9 @@ public:
     void setFeedPageMode(Viewer::FeedPageMode mode);
     Viewer::FeedPageMode getFeedPageMode() const;
 
+    void setMonochromeMode(bool mode);
+    bool getMonochromeMode() const;
+
     void setOpenDirLevel(int n);
     int getOpenDirLevel() const;
 

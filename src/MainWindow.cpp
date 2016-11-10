@@ -80,7 +80,7 @@ MainWindow::file_opendir(Fl_Widget *w, void *arg)
     MainWindow *mw = static_cast<MainWindow*>(arg);
 
     Fl_Native_File_Chooser dir_dlg(Fl_Native_File_Chooser::BROWSE_MULTI_DIRECTORY);
-    dir_dlg.title("Select Directories");
+    dir_dlg.title("Select Directory");
 
     if (dir_dlg.show() == 0)
     {
@@ -182,6 +182,14 @@ MainWindow::view_rightbinding(Fl_Widget *w, void *arg)
     MainWindow *mw = static_cast<MainWindow*>(arg);
     const Fl_Menu_Item *m = mw->findMenuItem(view_rightbinding);
     mw->imgviewer->setRightbindingView(m->value() != 0);
+}
+
+void
+MainWindow::view_monomode(Fl_Widget *w, void *arg)
+{
+    MainWindow *mw = static_cast<MainWindow*>(arg);
+    const Fl_Menu_Item *m = mw->findMenuItem(view_monomode);
+    mw->imgviewer->setMonochromeMode(m->value() != 0);
 }
 
 void
@@ -298,6 +306,7 @@ MainWindow::createMenus()
       {"&Spread",                      0, view_spread,       this, FL_MENU_TOGGLE},
       {"A&uto Spread",                 0, view_autospread,   this, FL_MENU_TOGGLE},
       {"&Right Binding",               0, view_rightbinding, this, FL_MENU_TOGGLE | FL_MENU_DIVIDER},
+      {"&Monochrome Mode",             0, view_monomode,     this, FL_MENU_TOGGLE | FL_MENU_DIVIDER},
       {"&Low Qual(Nearest Neighbor)",  0, view_nn,           this, FL_MENU_RADIO},
       {"&Balance Qual(Bilinear)",      0, view_bl,           this, FL_MENU_RADIO},
       {"&High Qual(Bicubic)",          0, view_bc,           this, FL_MENU_RADIO},
@@ -329,6 +338,7 @@ MainWindow::applyConfig()
     imgviewer->setAutoAdjustSpread(Config::view_autospread);
     imgviewer->setFeedPageMode(
             static_cast<Viewer::FeedPageMode>(Config::view_feedpage));
+    imgviewer->setMonochromeMode(Config::view_monomode);
     imgviewer->setOpenDirLevel(Config::view_openlevel);
     imgviewer->playlistVisible(Config::pl_visible);
 
@@ -348,6 +358,7 @@ MainWindow::applyConfig()
     if (imgviewer->getSpreadView())       findMenuItem(view_spread)->set();
     if (imgviewer->getAutoAdjustSpread()) findMenuItem(view_autospread)->set();
     if (imgviewer->getRightbindingView()) findMenuItem(view_rightbinding)->set();
+    if (imgviewer->getMonochromeMode())   findMenuItem(view_monomode)->set();
 
     switch (imgviewer->getViewMode())
     {
@@ -384,6 +395,7 @@ MainWindow::storeConfig()
     Config::view_rbind      = imgviewer->getRightbindingView();
     Config::view_openlevel  = imgviewer->getOpenDirLevel();
     Config::view_feedpage   = imgviewer->getFeedPageMode();
+    Config::view_monomode   = imgviewer->getMonochromeMode();
 
     Config::pl_visible      = imgviewer->isPlaylistVisible();
 }

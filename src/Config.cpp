@@ -18,6 +18,7 @@ int       Config::view_openlevel;
 const int Config::view_openlevel_max = 99;
 const int Config::view_openlevel_min = 0;
 int       Config::view_feedpage;
+bool      Config::view_monomode;
 
 bool      Config::pl_visible;
 
@@ -46,6 +47,7 @@ Config::SaveConfig()
     vw.set("rbind",      view_rbind);
     vw.set("openlevel",  view_openlevel);
     vw.set("feedpage",   view_feedpage);
+    vw.set("monomode",   view_monomode);
 
     Fl_Preferences pl(&s, "Playlist");
     pl.set("visible",  pl_visible);
@@ -78,6 +80,7 @@ Config::LoadConfig()
             view_openlevel_min,
             view_openlevel_max);
     vw.get("feedpage",   view_feedpage,   Viewer::MouseButton);
+    g(vw,  "monomode",   view_monomode,   false);
 
     Fl_Preferences pl(&s, "Playlist");
     g(pl,  "visible",  pl_visible,  true);

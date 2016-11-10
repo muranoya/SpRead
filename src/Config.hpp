@@ -24,6 +24,7 @@ public:
     static const int view_openlevel_max;
     static const int view_openlevel_min;
     static int    view_feedpage;
+    static bool   view_monomode;
 
     // Group - Playlist
     static bool pl_visible;

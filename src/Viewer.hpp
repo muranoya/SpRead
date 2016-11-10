@@ -67,6 +67,9 @@ public:
     void setFeedPageMode(FeedPageMode mode);
     FeedPageMode getFeedPageMode() const;
 
+    void setMonochromeMode(bool mode);
+    bool getMonochromeMode() const;
+
     void setNextImageCB(NextImageReqCB cd);
     void setPrevImageCB(PrevImageReqCB cd);
     void setChangeNumOfImagesCB(ChangeNumOfImagesCB cb);
@@ -95,6 +98,7 @@ private:
     bool rbind_view;
     bool autospread;
     FeedPageMode fp_mode;
+    bool monomode;
     bool is_drag_img;
     Point click_pos;
     Point click2_pos;

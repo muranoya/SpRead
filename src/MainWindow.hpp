@@ -33,6 +33,7 @@ private:
     static void view_spread      (Fl_Widget *w, void *arg);
     static void view_autospread  (Fl_Widget *w, void *arg);
     static void view_rightbinding(Fl_Widget *w, void *arg);
+    static void view_monomode    (Fl_Widget *w, void *arg);
     static void view_nn          (Fl_Widget *w, void *arg);
     static void view_bl          (Fl_Widget *w, void *arg);
     static void view_bc          (Fl_Widget *w, void *arg);
