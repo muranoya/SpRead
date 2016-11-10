@@ -2,7 +2,8 @@
 
 using namespace std;
 
-ImageViewer::ImageViewer(int x, int y, int w, int h)
+ImageViewer::ImageViewer(int x, int y, int w, int h,
+        const Fl_Window *parent)
     : Fl_Group(x, y, w, h)
     , changeStatus()
     , viewer(nullptr)
@@ -10,7 +11,7 @@ ImageViewer::ImageViewer(int x, int y, int w, int h)
     , pl_visible(true)
 {
     begin();
-    playlist = new Playlist(x, y, 150, h);
+    playlist = new Playlist(x, y, 150, h, parent);
     viewer = new Viewer(x+150, y, w-150, h);
     resizable(*viewer);
     end();

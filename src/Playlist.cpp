@@ -9,10 +9,11 @@
 
 using namespace std;
 
-Playlist::Playlist(int x, int y, int w, int h)
+Playlist::Playlist(int x, int y, int w, int h, const Fl_Window *parent)
     : Fl_Multi_Browser(x, y, w, h, "Playlist")
     , changeImages()
     , changePlaylistStatus()
+    , parent_window(parent)
     , opendirlevel(99)
     , img_index(-1)
     , img_num(0)

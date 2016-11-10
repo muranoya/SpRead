@@ -10,7 +10,8 @@
 class MagDialog : private Uncopyable
 {
 public:
-    static bool getFactor(double org, double &rslt);
+    static bool getFactor(double org, double &rslt,
+            const Fl_Window *parent = 0);
 
 private:
     Fl_Window *w;
@@ -26,7 +27,7 @@ private:
     const int ITEM_HEIGHT;
     const int ITEM_PADDING;
 
-    explicit MagDialog(int factor_org);
+    explicit MagDialog(int factor_org, const Fl_Window *parent = 0);
     ~MagDialog();
 
     static void pushedOkBtn(Fl_Widget *w, void *arg);

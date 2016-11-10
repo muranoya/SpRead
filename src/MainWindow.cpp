@@ -17,7 +17,8 @@ MainWindow::MainWindow(int argc, char *argv[],
 
     begin();
     imgviewer = new ImageViewer(0, menubar->h(),
-            this->w(), this->h() - menubar->h());
+            this->w(), this->h() - menubar->h(),
+            this);
     resizable(imgviewer);
     end();
 
@@ -141,7 +142,7 @@ MainWindow::view_specmag(Fl_Widget *w, void *arg)
     double f;
     bool rslt = MagDialog::getFactor(
             mw->imgviewer->getCustomScaleFactor(),
-            f);
+            f, mw);
     if (rslt)
     {
         mw->imgviewer->setViewMode(Viewer::CustomScale, f);

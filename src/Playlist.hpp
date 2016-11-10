@@ -1,6 +1,7 @@
 #ifndef PLAYLIST_HPP
 #define PLAYLIST_HPP
 
+#include <FL/Fl_Window.H>
 #include <FL/Fl_Multi_Browser.H>
 #include <functional>
 #include "ImageFile.hpp"
@@ -17,7 +18,8 @@ public:
     typedef std::function<void(void)>
         ChangePlaylistStatusCB;
 
-    explicit Playlist(int x, int y, int w, int h);
+    explicit Playlist(int x, int y, int w, int h,
+            const Fl_Window *parent = 0);
     ~Playlist();
 
     void openFiles(const StringVec &paths);
@@ -46,7 +48,7 @@ public:
 private:
     ChangeImagesCB changeImages;
     ChangePlaylistStatusCB changePlaylistStatus;
-
+    const Fl_Window *parent_window;
     int opendirlevel;
     int img_index;
     int img_num;

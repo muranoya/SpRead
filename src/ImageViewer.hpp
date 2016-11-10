@@ -1,6 +1,7 @@
 #ifndef IMAGEVIEWER_HPP
 #define IMAGEVIEWER_HPP
 
+#include <FL/Fl_Window.H>
 #include <FL/Fl_Group.H>
 #include <functional>
 #include "Viewer.hpp"
@@ -15,7 +16,8 @@ public:
     typedef std::function<void(void)>
         ChangeStatusCB;
 
-    explicit ImageViewer(int x, int y, int w, int h);
+    explicit ImageViewer(int x, int y, int w, int h,
+            const Fl_Window *parent = 0);
     ~ImageViewer();
 
     void openFiles(const StringVec &paths);

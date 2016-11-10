@@ -1,6 +1,6 @@
 #include "MagDialog.hpp"
 
-MagDialog::MagDialog(int factor_org)
+MagDialog::MagDialog(int factor_org, const Fl_Window *parent)
     : w(nullptr)
     , factor(nullptr)
     , btn_ok(nullptr)
@@ -15,6 +15,12 @@ MagDialog::MagDialog(int factor_org)
 {
     w = new Fl_Window(150, 90, "Magnification");
     w->set_modal();
+    if (parent)
+    {
+        w->resize(parent->x()+parent->w()/2-w->w()/2,
+                  parent->y()+parent->h()/2-w->h()/2,
+                  w->w(), w->h());
+    }
     w->begin();
     {
         factor = new Fl_Spinner(
@@ -54,9 +60,9 @@ MagDialog::~MagDialog()
 }
 
 bool
-MagDialog::getFactor(double org, double &rslt)
+MagDialog::getFactor(double org, double &rslt, const Fl_Window *parent)
 {
-    MagDialog dlg(org);
+    MagDialog dlg(org, parent);
     dlg.w->show();
     while (dlg.w->shown()) Fl::wait();
     rslt = (dlg.accepted ? dlg.rsltFactor
