@@ -1,7 +1,6 @@
 #include <iostream>
 #include <algorithm>
 #ifdef SUPPORT_PDF
-#include <poppler/cpp/poppler-document.h>
 #include <poppler/cpp/poppler-page.h>
 #include <poppler/cpp/poppler-page-renderer.h>
 #include <poppler/cpp/poppler-image.h>
@@ -18,10 +17,18 @@ PdfFile::PdfFile(const string &path, const RawData &data)
     : file_path(path)
     , data(data)
 {
+#ifdef SUPPORT_PDF
+    doc = poppler::document::load_from_raw_data(
+            reinterpret_cast<const char*>(this->data.data()),
+            this->data.size());
+#endif
 }
 
 PdfFile::~PdfFile()
 {
+#ifdef SUPPORT_PDF
+    delete doc;
+#endif
 }
 
 const string &
@@ -34,16 +41,6 @@ BasicImage *
 PdfFile::loadImage(int index) const
 {
 #ifdef SUPPORT_PDF
-    poppler::document *doc;
-    doc = poppler::document::load_from_raw_data(
-            reinterpret_cast<const char*>(data.data()), data.size());
-    if (!doc || doc->is_encrypted() || doc->is_locked())
-    {
-        cerr << "Cannot load " << file_path << endl;
-        delete doc;
-        return nullptr;
-    }
-
     poppler::page *p = doc->create_page(index);
     if (!p)
     {
@@ -64,8 +61,8 @@ PdfFile::loadImage(int index) const
         case poppler::image::format_rgb24:  d = 3; break;
         case poppler::image::format_argb32: d = 4; break; 
         default:
-            cerr << "Unknown image depth of PDF on page " << index << endl;
-            delete doc;
+            cerr << "Unknown image depth of PDF on page "
+                 << index << endl;
             delete p;
             return nullptr;
     }
@@ -97,7 +94,6 @@ PdfFile::loadImage(int index) const
 
     BasicImage *bimg = new BasicImage(img.width(), img.height(), d,
             reinterpret_cast<const uchar*>(img.const_data()));
-    delete doc;
     delete p;
     return bimg;
 #else
@@ -117,7 +113,8 @@ PdfFile::isOpenable(const string &ext)
 }
 
 THREAD_SAFE_FUNC bool
-PdfFile::open(const string &path, const RawData &data, vector<ImageItem*> &items)
+PdfFile::open(const string &path, const RawData &data,
+        vector<ImageItem*> &items)
 {
 #ifdef SUPPORT_PDF
     poppler::document *doc =

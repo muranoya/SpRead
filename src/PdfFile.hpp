@@ -2,6 +2,9 @@
 #define PDFFILE_HPP
 
 #include "ImageFile.hpp"
+#ifdef SUPPORT_PDF
+#include <poppler/cpp/poppler-document.h>
+#endif
 
 class PdfFile : public ImageFile
 {
@@ -19,6 +22,9 @@ public:
 private:
     const std::string file_path;
     const RawData data;
+#ifdef SUPPORT_PDF
+    poppler::document *doc;
+#endif
 
     explicit PdfFile(const std::string &path, const RawData &data);
 };
