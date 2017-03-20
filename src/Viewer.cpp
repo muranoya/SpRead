@@ -437,7 +437,8 @@ Viewer::splitWithNewLine(const string &str,
         StringVec &l)
 {
     static char buf[FL_PATH_MAX];
-    for (size_t i = 0, p = 0; i < str.length(); ++i)
+    size_t p, i;
+    for (i = p = 0; i < str.length(); ++i)
     {
         switch (str[i])
         {
@@ -447,16 +448,25 @@ Viewer::splitWithNewLine(const string &str,
             case '\n':
                 buf[p] = '\0';
                 fl_decode_uri(buf);
+#ifdef WIN32
+                l.push_back(buf);
+#else
                 if (strncmp("file://", buf, sizeof("file://")-1) == 0)
                 {
                     l.push_back(buf+sizeof("file://")-1);
                 }
+#endif
                 p = 0;
                 break;
             default:
                 buf[p++] = str[i];
         }
     }
+#ifdef WIN32
+    buf[p] = '\0';
+    fl_decode_uri(buf);
+    l.push_back(buf);
+#endif
 }
 
 void
