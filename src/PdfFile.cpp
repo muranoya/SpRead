@@ -83,7 +83,6 @@ PdfFile::loadImage(int index) const
                 uchar r = bits4[0];
                 uchar g = bits4[1];
                 uchar b = bits4[2];
-                //uchar a = bits4[3];
                 bits3[0] = b;
                 bits3[1] = g;
                 bits3[2] = r;

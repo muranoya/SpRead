@@ -116,6 +116,8 @@ private:
     void splitWithNewLine(const std::string &str,
             StringVec &l);
 
+    bool calc_size(const BasicImage *img1, const BasicImage *img2,
+        int *cimg_w, int *cimg_h, int *img_num, double *scale) const;
     void rescaling();
     void drawImageToWidget(const Point &pos, const BasicImage &img);
 };

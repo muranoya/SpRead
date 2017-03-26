@@ -60,7 +60,21 @@ Viewer::showImages(BasicImage *img_l, BasicImage *img_r)
     based_imgs[0] = img_l;
     if (img_r && monomode) img_r->convertToMono();
     based_imgs[1] = img_r;
+    
     img_pos = Point(0, 0);
+    if (getViewMode() == ActualSize ||
+            getViewMode() == CustomScale)
+    {
+        int cw, ch;
+        double s;
+        if (calc_size(based_imgs[0], based_imgs[1],
+                &cw, &ch, nullptr, &s))
+        {
+            Point pos((w() - cw*s)/2, (h() - ch*s)/2);
+            img_pos = pos;
+        }
+    }
+    
     rescaling();
 }
 
@@ -469,13 +483,90 @@ Viewer::splitWithNewLine(const string &str,
 #endif
 }
 
+bool
+Viewer::calc_size(const BasicImage *img1, const BasicImage *img2,
+        int *cimg_w, int *cimg_h, int *img_num, double *scale) const
+{
+    int cw, ch, n;
+
+    if (getSpreadView() && img1 && img2)
+    {
+        n = 2;
+        cw = img1->width() + img2->width();
+        ch = std::max(img1->height(), img2->height());
+        if (getAutoAdjustSpread())
+        {
+            const double v_wh = w() / static_cast<double>(h());
+            const int img1_w = img1->width();
+            const int img1_h = img2->height();
+            const double img1_wh = img1_w / static_cast<double>(img1_h);
+            const double img2_wh = cw / static_cast<double>(ch);
+            if (std::fabs(v_wh - img1_wh) < std::fabs(v_wh - img2_wh))
+            {
+                n = 1;
+                cw = img1_w;
+                ch = img1_h;
+            }
+        }
+    }
+    else if (img1)
+    {
+        n = 1;
+        cw = img1->width();
+        ch = img1->height();
+    }
+    else
+    {
+        if (img_num) *img_num = 0;
+        if (cimg_w)  *cimg_w  = 0;
+        if (cimg_h)  *cimg_h  = 0;
+        return false;
+    }
+
+    double s = 1.0;
+    if (getViewMode() == CustomScale)
+    {
+        s = scale_factor;
+    }
+    else if (getViewMode() == ActualSize)
+    {
+        s = 1.0;
+    }
+    else
+    {
+        double ws = 1.0;
+        double hs = 1.0;
+        if (w() < cw)
+        {
+            ws = w() / static_cast<double>(cw);
+        }
+
+        if (h() < ch)
+        {
+            hs = h() / static_cast<double>(ch);
+        }
+
+        if (getViewMode() == FittingWindow)
+        {
+            s = ws > hs ? hs : ws;
+        }
+        else if (getViewMode() == FittingWidth)
+        {
+            s = ws;
+        }
+    }
+
+    if (img_num) *img_num = n;
+    if (cimg_w)  *cimg_w  = cw;
+    if (cimg_h)  *cimg_h  = ch;
+    if (scale)   *scale   = s;
+    return true;
+}
+
 void
 Viewer::rescaling()
 {
     const double oldfactor = scale_factor;
-    double scale = 1.0;
-    int cimg_w = 0;
-    int cimg_h = 0;
     int old_imgnum = img_num;
 
     delete scaled_imgs[0];
@@ -483,74 +574,11 @@ Viewer::rescaling()
     scaled_imgs[0] = nullptr;
     scaled_imgs[1] = nullptr;
 
-    if (getSpreadView() &&
-            based_imgs[0] && based_imgs[1])
+    if (!calc_size(based_imgs[0], based_imgs[1],
+            nullptr, nullptr, &img_num, &scale_factor))
     {
-        img_num = 2;
-        cimg_w = based_imgs[0]->width() + based_imgs[1]->width();
-        cimg_h = std::max(
-                based_imgs[0]->height(),
-                based_imgs[1]->height());
-        if (getAutoAdjustSpread())
-        {
-            double v_wh = w() / static_cast<double>(h());
-            int img1_w = based_imgs[0]->width();
-            int img1_h = based_imgs[0]->height();
-            double img1_wh = img1_w / static_cast<double>(img1_h);
-            double img2_wh = cimg_w / static_cast<double>(cimg_h);
-            if (std::fabs(v_wh - img1_wh) < std::fabs(v_wh - img2_wh))
-            {
-                img_num = 1;
-                cimg_w = img1_w;
-                cimg_h = img1_h;
-            }
-        }
-    }
-    else if (based_imgs[0])
-    {
-        img_num = 1;
-        cimg_w = based_imgs[0]->width();
-        cimg_h = based_imgs[0]->height();
-    }
-    else
-    {
-        img_num = 0;
-        redraw();
         return;
     }
-
-    if (getViewMode() == CustomScale)
-    {
-        scale = scale_factor;
-    }
-    else if (getViewMode() == ActualSize)
-    {
-        scale = 1.0;
-    }
-    else
-    {
-        double ws = 1.0;
-        double hs = 1.0;
-        if (w() < cimg_w)
-        {
-            ws = w() / static_cast<double>(cimg_w);
-        }
-
-        if (h() < cimg_h)
-        {
-            hs = h() / static_cast<double>(cimg_h);
-        }
-
-        if (getViewMode() == FittingWindow)
-        {
-            scale = ws > hs ? hs : ws;
-        }
-        else if (getViewMode() == FittingWidth)
-        {
-            scale = ws;
-        }
-    }
-    scale_factor = scale;
 
     if (scale_factor == 1.0)
     {
