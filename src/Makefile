@@ -39,9 +39,9 @@ SRCS = main.cpp \
 %.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(DEBUG) -c $<
 all: $(TARGET)
+$(TARGET): $(OBJS)
 	$(LINK) -o $(TARGET) $(OBJS) $(LDSTATIC)
 	strip $(TARGET)
-$(TARGET): $(OBJS)
 
 main.o: main.cpp \
 	Config.hpp \
