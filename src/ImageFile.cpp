@@ -7,6 +7,7 @@
 #include "ImageFile.hpp"
 #include "ArchiveFile.hpp"
 #include "StdImgFile.hpp"
+#include "WebPFile.hpp"
 #include "PdfFile.hpp"
 
 using namespace std;
@@ -19,21 +20,26 @@ const std::vector<ImageFile::FileInfo> ImageFile::imgs = {
         StdImgFile::isOpenable,
         StdImgFile::open,
         StdImgFile::extList
-    }
+    },
+    {
+        WebPFile::isOpenable,
+        WebPFile::open,
+        WebPFile::extList
+    },
 };
 const std::vector<ImageFile::FileInfo> ImageFile::docs = {
     {
         PdfFile::isOpenable,
         PdfFile::open,
         PdfFile::extList
-    }
+    },
 };
 const std::vector<ImageFile::FileInfo> ImageFile::archs = {
     {
         ArchiveFile::isOpenable,
         ArchiveFile::open,
         ArchiveFile::extList
-    }
+    },
 };
 
 ImageFile::~ImageFile()
@@ -126,8 +132,8 @@ ImageFile::readableFormatExtList()
                 {
                     extlist += y + ",";
                 }
-                extlist += "}\n";
             }
+            extlist += "}\n";
         }
     }
     return extlist;

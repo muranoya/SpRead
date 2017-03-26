@@ -1,8 +1,8 @@
 CXX      = $(shell fltk-config --cxx)
 DEBUG    = -g
-CXXFLAGS = $(shell fltk-config --use-images --cxxflags ) -std=c++11 -O2 -Wall -I. -DSUPPORT_PDF
+CXXFLAGS = $(shell fltk-config --use-images --cxxflags ) -std=c++11 -O2 -Wall -I. -DSUPPORT_PDF -DSUPPORT_WEBP
 LDFLAGS  = $(shell fltk-config --use-images --ldflags )
-LDSTATIC = $(shell fltk-config --use-images --ldstaticflags ) -larchive -lpoppler-cpp
+LDSTATIC = $(shell fltk-config --use-images --ldstaticflags ) -larchive -lpoppler-cpp -lwebp
 LINK     = $(CXX)
 TARGET = SpRead
 OBJS = main.o \
@@ -17,7 +17,7 @@ OBJS = main.o \
 	   ImageViewer.o \
 	   image.o \
 	   BasicImage.o \
-	   ImageFile.o StdImgFile.o PdfFile.o ArchiveFile.o
+	   ImageFile.o StdImgFile.o WebPFile.o PdfFile.o ArchiveFile.o
 
 SRCS = main.cpp \
 	   Point.cpp \
@@ -31,7 +31,7 @@ SRCS = main.cpp \
 	   ImageViewer.cpp \
 	   image.cpp \
 	   BasicImage.cpp \
-	   ImageFile.o StdImgFile.o PdfFile.o ArchiveFile.o \
+	   ImageFile.cpp StdImgFile.cpp WebPFile.cpp PdfFile.cpp ArchiveFile.cpp \
 
 .PHONY: all clean
 
@@ -58,6 +58,7 @@ MainWindow.o: MainWindow.cpp MainWindow.hpp \
 ImageFile.o: ImageFile.cpp ImageFile.hpp \
 	ArchiveFile.hpp \
 	StdImgFile.hpp \
+	WebPFile.hpp \
 	PdfFile.hpp \
 	BasicImage.hpp \
 	Uncopyable.hpp
@@ -91,6 +92,8 @@ OpenDialog.o: OpenDialog.cpp OpenDialog.hpp
 ArchiveFile.o: ArchiveFile.cpp ArchiveFile.hpp \
 	ImageFile.hpp
 StdImgFile.o: StdImgFile.cpp StdImgFile.hpp \
+	ImageFile.hpp
+WebPFile.o: WebPFile.cpp WebPFile.hpp \
 	ImageFile.hpp
 PdfFile.o: PdfFile.cpp PdfFile.hpp \
 	ImageFile.hpp

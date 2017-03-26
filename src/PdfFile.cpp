@@ -10,7 +10,9 @@
 using namespace std;
 
 static const StringVec exts = {
+#ifdef SUPPORT_PDF
     "pdf",
+#endif
 };
 
 PdfFile::PdfFile(const string &path, const RawData &data)
