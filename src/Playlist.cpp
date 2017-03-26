@@ -288,10 +288,11 @@ Playlist::changeStatus(int new_idx, int new_num)
     {
         for (int i = 0; i < img_num; ++i)
         {
-            if (isValidIndex(img_index+i))
+            int idx = (img_index+i) % count();
+            if (isValidIndex(idx))
             {
-                ImageItem *f = static_cast<ImageItem*>(data(img_index+1+i));
-                text(img_index+1+i, f->virtualName().c_str());
+                ImageItem *f = static_cast<ImageItem*>(data(idx+1));
+                text(idx+1, f->virtualName().c_str());
             }
         }
     }
@@ -303,11 +304,12 @@ Playlist::changeStatus(int new_idx, int new_num)
     {
         for (int i = 0; i < img_num; ++i)
         {
-            if (isValidIndex(img_index+i))
+            int idx = (img_index+i) % count();
+            if (isValidIndex(idx))
             {
-                ImageItem *f = static_cast<ImageItem*>(data(img_index+1+i));
+                ImageItem *f = static_cast<ImageItem*>(data(idx+1));
                 string str = "@B10 " + f->virtualName();
-                text(img_index+1+i, str.c_str());
+                text(idx+1, str.c_str());
             }
         }
     }
