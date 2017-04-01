@@ -284,7 +284,7 @@ Playlist::changeStatus(int new_idx, int new_num)
 {
     bool c = (new_idx != img_index || new_num != img_num);
 
-    if (img_index >= 0 && img_num > 0)
+    if (img_index >= 0 && img_num > 0 && count() > 0)
     {
         for (int i = 0; i < img_num; ++i)
         {
@@ -300,7 +300,7 @@ Playlist::changeStatus(int new_idx, int new_num)
     img_index = new_idx;
     img_num = new_num;
 
-    if (img_index >= 0 && img_num > 0)
+    if (img_index >= 0 && img_num > 0 && count() > 0)
     {
         for (int i = 0; i < img_num; ++i)
         {

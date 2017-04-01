@@ -577,6 +577,7 @@ Viewer::rescaling()
     if (!calc_size(based_imgs[0], based_imgs[1],
             nullptr, nullptr, &img_num, &scale_factor))
     {
+        redraw();
         return;
     }
 
