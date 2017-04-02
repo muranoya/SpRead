@@ -1,5 +1,6 @@
 #include <iostream>
 #include <algorithm>
+#include <vector>
 #ifdef SUPPORT_PDF
 #include <poppler/cpp/poppler-page.h>
 #include <poppler/cpp/poppler-page-renderer.h>
@@ -39,14 +40,66 @@ PdfFile::path() const
     return file_path;
 }
 
-BasicImage *
-PdfFile::loadImage(int index) const
+shared_ptr<BasicImage>
+PdfFile::loadImage(int page)
+{
+    return shared_ptr<BasicImage>(rendering_page(doc, page));
+}
+
+THREAD_SAFE_FUNC bool
+PdfFile::isOpenable(const string &ext)
 {
 #ifdef SUPPORT_PDF
-    poppler::page *p = doc->create_page(index);
+     return any_of(exts.cbegin(), exts.cend(),
+             [&ext](const string &x) { return x == ext; });
+#else
+     return false;
+#endif
+}
+
+THREAD_SAFE_FUNC bool
+PdfFile::open_pdf(const string &path, const RawData &data,
+        vector<ImageItem*> &items)
+{
+#ifdef SUPPORT_PDF
+    poppler::document *doc =
+        poppler::document::load_from_raw_data(
+                reinterpret_cast<const char*>(data.data()), data.size());
+    if (!doc || doc->is_encrypted() || doc->is_locked())
+    {
+        cerr << "Cannot load PDF from memory." << endl;
+        cerr << "File: " << path << endl;
+        delete doc;
+        return false;
+    }
+
+    int page_num = doc->pages();
+    delete doc;
+    shared_ptr<ImageFile> f(new PdfFile(path, data));
+    for (int i = 0; i < page_num; ++i)
+    {
+        items.push_back(new ImageItem(f, i, to_string(i)));
+    }
+    return true;
+#else
+    return false;
+#endif
+}
+
+const StringVec &
+PdfFile::extList()
+{
+    return exts;
+}
+
+BasicImage *
+PdfFile::rendering_page(poppler::document *doc, int page)
+{
+#ifdef SUPPORT_PDF
+    poppler::page *p = doc->create_page(page);
     if (!p)
     {
-        cerr << "Cannot load a page of PDF : " << index << endl;
+        cerr << "Cannot load a page of PDF : " << page << endl;
         delete p;
         return nullptr;
     }
@@ -64,7 +117,7 @@ PdfFile::loadImage(int index) const
         case poppler::image::format_argb32: d = 4; break; 
         default:
             cerr << "Unknown image depth of PDF on page "
-                 << index << endl;
+                 << page << endl;
             delete p;
             return nullptr;
     }
@@ -100,51 +153,5 @@ PdfFile::loadImage(int index) const
 #else
     return nullptr;
 #endif
-}
-
-THREAD_SAFE_FUNC bool
-PdfFile::isOpenable(const string &ext)
-{
-#ifdef SUPPORT_PDF
-     return any_of(exts.cbegin(), exts.cend(),
-             [&ext](const string &x) { return x == ext; });
-#else
-     return false;
-#endif
-}
-
-THREAD_SAFE_FUNC bool
-PdfFile::open(const string &path, const RawData &data,
-        vector<ImageItem*> &items)
-{
-#ifdef SUPPORT_PDF
-    poppler::document *doc =
-        poppler::document::load_from_raw_data(
-                reinterpret_cast<const char*>(data.data()), data.size());
-    if (!doc || doc->is_encrypted() || doc->is_locked())
-    {
-        cerr << "Cannot load PDF from memory." << endl;
-        cerr << "File: " << path << endl;
-        delete doc;
-        return false;
-    }
-
-    int page_num = doc->pages();
-    delete doc;
-    shared_ptr<ImageFile> f(new PdfFile(path, data));
-    for (int i = 0; i < page_num; ++i)
-    {
-        items.push_back(new ImageItem(f, i, to_string(i)));
-    }
-    return true;
-#else
-    return false;
-#endif
-}
-
-const StringVec &
-PdfFile::extList()
-{
-    return exts;
 }
 

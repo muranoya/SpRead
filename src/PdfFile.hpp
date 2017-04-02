@@ -12,10 +12,10 @@ public:
     ~PdfFile();
 
     const std::string &path() const;
-    BasicImage *loadImage(int index) const;
+    std::shared_ptr<BasicImage> loadImage(int page);
 
     THREAD_SAFE_FUNC static bool isOpenable(const std::string &ext);
-    THREAD_SAFE_FUNC static bool open(const std::string &path,
+    THREAD_SAFE_FUNC static bool open_pdf(const std::string &path,
             const RawData &data, std::vector<ImageItem*> &items);
     static const StringVec &extList();
 
@@ -27,6 +27,7 @@ private:
 #endif
 
     explicit PdfFile(const std::string &path, const RawData &data);
+    static BasicImage *rendering_page(poppler::document *doc, int page);
 };
 
 #endif // PDFFILE_HPP

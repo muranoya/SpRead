@@ -38,7 +38,7 @@ ImageViewer::ImageViewer(int x, int y, int w, int h,
             });
 
     playlist->setChangeImagesCB(
-            [this](BasicImage *l, BasicImage *r) {
+            [this](const shared_ptr<BasicImage> &l, const shared_ptr<BasicImage> &r) {
             viewer->showImages(l, r);
             });
     playlist->setChangePlaylistStatusCB(

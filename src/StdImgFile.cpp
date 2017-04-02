@@ -27,8 +27,8 @@ StdImgFile::path() const
     return file_path;
 }
 
-BasicImage *
-StdImgFile::loadImage(int index) const
+shared_ptr<BasicImage>
+StdImgFile::loadImage(int index)
 {
     string ext = fl_filename_ext(file_path.c_str());
     if (ext.empty()) return nullptr;
@@ -37,12 +37,13 @@ StdImgFile::loadImage(int index) const
 
     if (ext == "jpg" || ext == "jpeg")
     {
-        return new BasicImage(Fl_JPEG_Image(nullptr, data.data()));
+        return shared_ptr<BasicImage>(
+                new BasicImage(Fl_JPEG_Image(nullptr, data.data())));
     }
     if (ext == "png")
     {
-        return new BasicImage(
-                Fl_PNG_Image(nullptr, data.data(), data.size()));
+        return shared_ptr<BasicImage>(
+                new BasicImage(Fl_PNG_Image(nullptr, data.data(), data.size())));
     }
     return nullptr;
 }
@@ -55,7 +56,7 @@ StdImgFile::isOpenable(const string &ext)
 }
 
 THREAD_SAFE_FUNC bool
-StdImgFile::open(const string &path, const RawData &data,
+StdImgFile::open_stdimg(const string &path, const RawData &data,
         vector<ImageItem*> &items)
 {
     if (data.empty()) return false;

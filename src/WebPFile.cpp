@@ -29,8 +29,8 @@ WebPFile::path() const
     return file_path;
 }
 
-BasicImage *
-WebPFile::loadImage(int) const
+shared_ptr<BasicImage>
+WebPFile::loadImage(int)
 {
 #ifdef SUPPORT_WEBP
     string ext = fl_filename_ext(file_path.c_str());
@@ -47,7 +47,7 @@ WebPFile::loadImage(int) const
             out = WebPDecodeRGBA(data.data(), data.size(), &w, &h);
             BasicImage *bi = new BasicImage(w, h, 4, out);
             WebPFree(out);
-            return bi;
+            return shared_ptr<BasicImage>(bi);
         }
     }
 #endif
@@ -66,7 +66,7 @@ WebPFile::isOpenable(const string &ext)
 }
 
 THREAD_SAFE_FUNC bool
-WebPFile::open(const string &path, const RawData &data,
+WebPFile::open_webp(const string &path, const RawData &data,
         vector<ImageItem*> &items)
 {
 #ifdef SUPPORT_WEBP

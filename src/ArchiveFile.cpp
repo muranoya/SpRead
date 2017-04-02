@@ -19,7 +19,7 @@ ArchiveFile::isOpenable(const string &ext)
 }
 
 THREAD_SAFE_FUNC bool
-ArchiveFile::open(const string &path, const RawData &data,
+ArchiveFile::open_arch(const string &path, const RawData &data,
         vector<ImageItem*> &items)
 {
     struct archive *a = archive_read_new();
@@ -56,6 +56,11 @@ ArchiveFile::open(const string &path, const RawData &data,
     }
     archive_read_free(a);
     return true;
+}
+
+void
+ArchiveFile::remove_from_playlist(int) noexcept
+{
 }
 
 const StringVec &

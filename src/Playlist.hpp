@@ -4,6 +4,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Multi_Browser.H>
 #include <functional>
+#include <memory>
 #include "ImageFile.hpp"
 #include "BasicImage.hpp"
 #include "Uncopyable.hpp"
@@ -13,7 +14,8 @@
 class Playlist : public Fl_Multi_Browser, private Uncopyable
 {
 public:
-    typedef std::function<void(BasicImage*, BasicImage*)>
+    typedef std::function<void(const std::shared_ptr<BasicImage>&,
+            const std::shared_ptr<BasicImage>&)>
         ChangeImagesCB;
     typedef std::function<void(void)>
         ChangePlaylistStatusCB;

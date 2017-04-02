@@ -18,26 +18,26 @@ using namespace std;
 const std::vector<ImageFile::FileInfo> ImageFile::imgs = {
     {
         StdImgFile::isOpenable,
-        StdImgFile::open,
+        StdImgFile::open_stdimg,
         StdImgFile::extList
     },
     {
         WebPFile::isOpenable,
-        WebPFile::open,
+        WebPFile::open_webp,
         WebPFile::extList
     },
 };
 const std::vector<ImageFile::FileInfo> ImageFile::docs = {
     {
         PdfFile::isOpenable,
-        PdfFile::open,
+        PdfFile::open_pdf,
         PdfFile::extList
     },
 };
 const std::vector<ImageFile::FileInfo> ImageFile::archs = {
     {
         ArchiveFile::isOpenable,
-        ArchiveFile::open,
+        ArchiveFile::open_arch,
         ArchiveFile::extList
     },
 };
@@ -208,7 +208,7 @@ ImageItem::virtualName() const
     return string(fl_filename_name(virtualPath().c_str()));
 }
 
-BasicImage *
+shared_ptr<BasicImage>
 ImageItem::image() const
 {
     return file->loadImage(page);

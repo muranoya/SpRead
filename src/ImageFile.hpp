@@ -21,7 +21,7 @@ public:
     virtual ~ImageFile();
     
     virtual const std::string &path() const = 0;
-    virtual BasicImage *loadImage(int index) const = 0;
+    virtual std::shared_ptr<BasicImage> loadImage(int index) = 0;
 
     THREAD_SAFE_FUNC static OpenResult open(const std::string &path,
             std::vector<ImageItem*> &items);
@@ -61,7 +61,7 @@ public:
     std::string virtualPath() const;
     std::string virtualName() const;
 
-    BasicImage *image() const;
+    std::shared_ptr<BasicImage> image() const;
 
 private:
     const int page;

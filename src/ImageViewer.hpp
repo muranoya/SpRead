@@ -4,6 +4,7 @@
 #include <FL/Fl_Window.H>
 #include <FL/Fl_Group.H>
 #include <functional>
+#include <memory>
 #include "Viewer.hpp"
 #include "Playlist.hpp"
 #include "BasicImage.hpp"

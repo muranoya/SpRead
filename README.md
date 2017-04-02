@@ -18,7 +18,7 @@ It is written in C++ using FLTK. So, SpRead can run on Windows, OS X and *NIX.
 ## Requirement
 * C++ Compiler which supports C++11 or above
 * libarchive >= 3.2.0
-* FLTK >= 1.3.3
+* FLTK 1.x
 * Poppler >= 0.41 (optional)
 * libwebp (optional)
 
@@ -79,7 +79,7 @@ Note: If you use binaries which are written in C++ and compile using MinGW, you 
  1. Creates class which inherits `ImageFile`.
  2. New class must implement five methods at least below.
     * `const std::string &path() const;`
-    * `BasicImage *loadImage(int index) const;`
+    * `BasicImage *loadImage(int index);`
     * `bool isOpenable(const std::string&);`
     * `bool open(const std::string&, const RawData&, std::vector<ImageItem*>&);`
     * `const StringVec &enum_exts();`
@@ -94,11 +94,11 @@ Note: If you use binaries which are written in C++ and compile using MinGW, you 
 
 ## TODO
 * フィルタの実装
- * アンシャープ
- * アンチエイリアス
- * 非線形フィルタ
- * グレイスケール
- * 平均化
+  * アンシャープ
+  * アンチエイリアス
+  * 非線形フィルタ
+  * グレイスケール
+  * 平均化
 * アプリケーショのアイコンを追加する
 * 背景色指定
 * サムネイル表示モード

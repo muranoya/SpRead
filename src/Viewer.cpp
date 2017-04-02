@@ -45,20 +45,17 @@ Viewer::Viewer(int x, int y, int w, int h)
 
 Viewer::~Viewer()
 {
-    delete based_imgs[0];
-    delete based_imgs[1];
     delete scaled_imgs[0];
     delete scaled_imgs[1];
 }
 
 void
-Viewer::showImages(BasicImage *img_l, BasicImage *img_r)
+Viewer::showImages(const shared_ptr<BasicImage> &img_l,
+        const shared_ptr<BasicImage> &img_r)
 {
-    delete based_imgs[0];
-    delete based_imgs[1];
-    if (img_l && monomode) img_l->convertToMono();
+    if (img_l.get() && monomode) img_l->convertToMono();
     based_imgs[0] = img_l;
-    if (img_r && monomode) img_r->convertToMono();
+    if (img_r.get() && monomode) img_r->convertToMono();
     based_imgs[1] = img_r;
     
     img_pos = Point(0, 0);
@@ -484,12 +481,13 @@ Viewer::splitWithNewLine(const string &str,
 }
 
 bool
-Viewer::calc_size(const BasicImage *img1, const BasicImage *img2,
+Viewer::calc_size(const shared_ptr<BasicImage> &img1,
+        const shared_ptr<BasicImage> &img2,
         int *cimg_w, int *cimg_h, int *img_num, double *scale) const
 {
     int cw, ch, n;
 
-    if (getSpreadView() && img1 && img2)
+    if (getSpreadView() && img1.get() && img2.get())
     {
         n = 2;
         cw = img1->width() + img2->width();
@@ -509,7 +507,7 @@ Viewer::calc_size(const BasicImage *img1, const BasicImage *img2,
             }
         }
     }
-    else if (img1)
+    else if (img1.get())
     {
         n = 1;
         cw = img1->width();
