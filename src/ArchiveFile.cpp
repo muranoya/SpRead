@@ -25,7 +25,8 @@ ArchiveFile::open_arch(const string &path, const RawData &data,
     struct archive *a = archive_read_new();
     archive_read_support_filter_all(a);
     archive_read_support_format_all(a);
-    int r = archive_read_open_memory(a, data.data(), data.size());
+    unsigned char *dp = const_cast<unsigned char*>(data.data());
+    int r = archive_read_open_memory(a, dp, data.size());
     if (r != ARCHIVE_OK)
     {
         cerr << archive_error_string(a) << endl;
@@ -40,7 +41,7 @@ ArchiveFile::open_arch(const string &path, const RawData &data,
         RawData data;
         const void *buf;
         size_t len;
-        la_int64_t offset;
+        off_t offset;
 
         while (archive_read_data_block(a, &buf, &len, &offset) == ARCHIVE_OK)
         {

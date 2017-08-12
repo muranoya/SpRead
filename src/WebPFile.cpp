@@ -46,7 +46,7 @@ WebPFile::loadImage(int)
             uint8_t *out;
             out = WebPDecodeRGBA(data.data(), data.size(), &w, &h);
             BasicImage *bi = new BasicImage(w, h, 4, out);
-            WebPFree(out);
+            free(out);
             return shared_ptr<BasicImage>(bi);
         }
     }

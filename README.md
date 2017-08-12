@@ -17,7 +17,7 @@ It is written in C++ using FLTK. So, SpRead can run on Windows, OS X and *NIX.
 
 ## Requirement
 * C++ Compiler which supports C++11 or above
-* libarchive >= 3.2.0
+* libarchive >= 3.1.2
 * FLTK 1.x
 * Poppler >= 0.41 (optional)
 * libwebp (optional)
